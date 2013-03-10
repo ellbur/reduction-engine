@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="scala" name="Scala">
+      <configuration>
+        <option name="compilerLibraryLevel" value="Project" />
+        <option name="compilerLibraryName" value="org.scala-lang:scala-compiler:2.10.1-RC3" />
+        <option name="compilerOptions" value="-Xexperimental" />
+        <option name="deprecationWarnings" value="true" />
+        <option name="uncheckedWarnings" value="true" />
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="scala-library" level="application" />
+    <orderEntry type="library" name="com.miglayout:miglayout-core:4.2" level="project" />
+    <orderEntry type="library" name="com.miglayout:miglayout-swing:4.2" level="project" />
+    <orderEntry type="library" name="cc.co.scala-reactive:reactive-core_2.10:0.3.0" level="project" />
+  </component>
+</module>
+
