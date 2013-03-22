@@ -12,38 +12,38 @@
     <file path="/Structure2.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362296985181" ignored="false" />
     <file path="/DynamicStructure.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362701617370" ignored="false" />
     <file path="/a.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362298064489" ignored="false" />
-    <file path="/GraphLayout.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362544020101" ignored="false" />
+    <file path="/GraphLayout.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363552209247" ignored="false" />
     <file path="/Editor.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362702395076" ignored="false" />
-    <file path="/GarbageCollection.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362705429927" ignored="false" />
-    <file path="/Bubbles.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362702311565" ignored="false" />
-    <file path="/KindsOfBubbles.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362705520774" ignored="false" />
-    <file path="/OurBubbles.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362705387496" ignored="false" />
-    <file path="/FocusAndGroups.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362702556773" ignored="false" />
-    <file path="/Reductions.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362887942719" ignored="false" />
-    <file path="/DiagramMotion.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362702654581" ignored="false" />
-    <file path="/Editing.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362705352084" ignored="false" />
-    <file path="/GeometricMotion.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362703117676" ignored="false" />
-    <file path="/Layout.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362703152149" ignored="false" />
-    <file path="/Rendering.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362703232612" ignored="false" />
+    <file path="/GarbageCollection.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363484515041" ignored="false" />
+    <file path="/Bubbles.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363667289990" ignored="false" />
+    <file path="/KindsOfBubbles.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363930441780" ignored="false" />
+    <file path="/OurBubbles.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363667540691" ignored="false" />
+    <file path="/FocusAndGroups.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362972567105" ignored="false" />
+    <file path="/Reductions.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363560665380" ignored="false" />
+    <file path="/DiagramMotion.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363472437222" ignored="false" />
+    <file path="/Editing.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363849483655" ignored="false" />
+    <file path="/GeometricMotion.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363468145714" ignored="false" />
+    <file path="/Layout.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363669569707" ignored="false" />
+    <file path="/Rendering.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363930249830" ignored="false" />
     <file path="/Keys.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362704253912" ignored="false" />
     <file path="/SomeExperiments.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362703339509" ignored="false" />
     <file path="/DynamicStructure2.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362724169723" ignored="false" />
     <file path="/DynamicStructure3.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362869578034" ignored="false" />
-    <file path="/fragment.java" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362811888024" ignored="false" />
-    <file path="$PROJECT_DIR$/target/resolution-cache/reports/default-default-98f950_2.10/runtime-internal-resolved.xml" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362813945631" ignored="false" />
+    <file path="/fragment.java" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363553195573" ignored="false" />
     <file path="$PROJECT_DIR$/target/resolution-cache/reports/default-default-98f950_2.10/optional-resolved.xml" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362813945631" ignored="false" />
     <file path="$PROJECT_DIR$/target/resolution-cache/reports/default-default-98f950_2.10/sources-resolved.xml" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362813945631" ignored="false" />
     <file path="$PROJECT_DIR$/target/resolution-cache/reports/default-default-98f950_2.10/provided-resolved.xml" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362813945631" ignored="false" />
-    <file path="$PROJECT_DIR$/target/resolution-cache/reports/default-default-98f950_2.10/compile-internal-resolved.xml" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362813945631" ignored="false" />
-    <file path="$PROJECT_DIR$/target/resolution-cache/reports/default-default-98f950_2.10/docs-resolved.xml" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362813945631" ignored="false" />
     <file path="$PROJECT_DIR$/target/resolution-cache/reports/default-default-98f950_2.10/pom-resolved.xml" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362813945631" ignored="false" />
-    <file path="$PROJECT_DIR$/target/resolution-cache/reports/default-default-98f950_2.10/runtime-resolved.xml" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362813945631" ignored="false" />
-    <file path="$PROJECT_DIR$/target/resolution-cache/reports/default-default-98f950_2.10/compile-resolved.xml" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362813945632" ignored="false" />
     <file path="$PROJECT_DIR$/target/resolution-cache/reports/default-default-98f950_2.10/plugin-resolved.xml" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362813945632" ignored="false" />
     <file path="$PROJECT_DIR$/target/resolution-cache/reports/default-default-98f950_2.10/test-resolved.xml" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362813945632" ignored="false" />
     <file path="$PROJECT_DIR$/target/resolution-cache/reports/default-default-98f950_2.10/test-internal-resolved.xml" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362813945632" ignored="false" />
-    <file path="$PROJECT_DIR$/target/resolution-cache/default/default-98f950_2.10/0.1-SNAPSHOT/resolved.xml.xml" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362813945953" ignored="false" />
-    <file path="/Nodes.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362887165216" ignored="false" />
+    <file path="/Nodes.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363845726471" ignored="false" />
+    <file path="/Inputs.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363929940045" ignored="false" />
+    <file path="/SugarNodes.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363929590722" ignored="false" />
+    <file path="/GraphLayout2.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363560899712" ignored="false" />
+    <file path="/GraphLayout3.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363667772186" ignored="false" />
+    <file path="/NodeUtils.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363846586938" ignored="false" />
+    <file path="/Idioms.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363848497418" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,9 +51,6 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
-  <component name="CompilerWorkspaceConfiguration">
-    <option name="MAKE_PROJECT_ON_SAVE" value="true" />
-  </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
@@ -102,41 +99,64 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
     <favorites_list name="untitled" />
+    <favorites_list name="reduction-engine" />
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Nodes.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/reductionengine/logic/Nodes.scala">
+      <file leaf-file-name="SugarNodes.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/reductionengine/sugar/SugarNodes.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="84" column="13" selection-start="2303" selection-end="2303" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Idioms.scala" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/reductionengine/sugar/Idioms.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="4" column="0" selection-start="128" selection-end="128" vertical-scroll-proportion="0.08342481">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Inputs.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Inputs.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="7" column="0" selection-start="185" selection-end="185" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#30#88#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="KindsOfBubbles.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/KindsOfBubbles.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="54" column="4" selection-start="1776" selection-end="1776" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="Reductions.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/reductionengine/logic/Reductions.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="0" selection-start="581" selection-end="581" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Reductions.scala" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Reductions.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="3" selection-start="563" selection-end="563" vertical-scroll-proportion="0.8300971">
+            <state line="64" column="6" selection-start="1948" selection-end="1948" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DynamicStructure2.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/DynamicStructure2.scala">
+      <file leaf-file-name="Rendering.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Rendering.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="65" column="4" selection-start="1797" selection-end="1797" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="28" column="2" selection-start="837" selection-end="837" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#30#47#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -151,22 +171,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/reductionengine/DiagramMotion.scala" />
-        <option value="$PROJECT_DIR$/src/reductionengine/GeometricMotion.scala" />
-        <option value="$PROJECT_DIR$/src/reductionengine/Rendering.scala" />
-        <option value="$PROJECT_DIR$/src/reductionengine/SomeExperiments.scala" />
-        <option value="$PROJECT_DIR$/src/reductionengine/Main.scala" />
-        <option value="$PROJECT_DIR$/src/reductionengine/Layout.scala" />
-        <option value="$PROJECT_DIR$/src/reductionengine/Keys.scala" />
-        <option value="$PROJECT_DIR$/src/reductionengine/Editing.scala" />
-        <option value="$PROJECT_DIR$/src/reductionengine/OurBubbles.scala" />
-        <option value="$PROJECT_DIR$/src/reductionengine/GarbageCollection.scala" />
-        <option value="$PROJECT_DIR$/src/reductionengine/KindsOfBubbles.scala" />
-        <option value="$PROJECT_DIR$/src/reductionengine/Reductions.scala" />
-        <option value="$PROJECT_DIR$/src/DynamicStructure2.scala" />
-        <option value="$PROJECT_DIR$/src/DynamicStructure3.scala" />
+        <option value="$PROJECT_DIR$/src/GraphLayout.scala" />
+        <option value="$PROJECT_DIR$/src/graphutils/GraphLayout.scala" />
+        <option value="$PROJECT_DIR$/src/graphutils/GraphLayout2.scala" />
+        <option value="$PROJECT_DIR$/src/reductionengine/gui/OurBubbles.scala" />
+        <option value="$PROJECT_DIR$/src/graphutils/GraphLayout3.scala" />
+        <option value="$PROJECT_DIR$/src/reductionengine/gui/Bubbles.scala" />
+        <option value="$PROJECT_DIR$/src/reductionengine/gui/Layout.scala" />
         <option value="$PROJECT_DIR$/src/reductionengine/logic/Nodes.scala" />
-        <option value="$PROJECT_DIR$/src/reductionengine/logic/Reductions.scala" />
+        <option value="$PROJECT_DIR$/src/reductionengine/sugar/Idioms.scala" />
+        <option value="$PROJECT_DIR$/src/reductionengine/logic/NodeUtils.scala" />
+        <option value="$PROJECT_DIR$/src/reductionengine/gui/Editing.scala" />
+        <option value="$PROJECT_DIR$/src/reductionengine/gui/Inputs.scala" />
+        <option value="$PROJECT_DIR$/src/reductionengine/gui/Rendering.scala" />
+        <option value="$PROJECT_DIR$/src/reductionengine/gui/KindsOfBubbles.scala" />
+        <option value="$PROJECT_DIR$/src/reductionengine/gui/Reductions.scala" />
+        <option value="$PROJECT_DIR$/src/reductionengine/sugar/SugarNodes.scala" />
       </list>
     </option>
   </component>
@@ -174,9 +194,10 @@
     <treeState />
   </component>
   <component name="ProjectFrameBounds">
+    <option name="x" value="1280" />
     <option name="y" value="19" />
-    <option name="width" value="1280" />
-    <option name="height" value="781" />
+    <option name="width" value="1920" />
+    <option name="height" value="1061" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -340,7 +361,7 @@
     <option name="STATE" value="0" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
+    <navigator proportions="" version="1" splitterProportion="0.5">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -351,103 +372,19 @@
       <autoscrollFromSource />
       <sortByType />
     </navigator>
-    <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="untitled" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="untitled" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="untitled" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="untitled" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="untitled" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="untitled" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="untitled" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="reductionengine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="logic" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="untitled" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="untitled" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="reductionengine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gui" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="Libraries" />
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="Repository.Attach.JavaDocs" value="false" />
-    <property name="options.lastSelected" value="org.jetbrains.plugins.scala.compiler.ScalaApplicationSettingsForm" />
+    <property name="options.lastSelected" value="editor.preferences.completion" />
     <property name="MemberChooser.sorted" value="false" />
     <property name="recentsLimit" value="5" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="GoToClass.includeJavaFiles" value="false" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
@@ -458,25 +395,9 @@
     <property name="options.searchVisible" value="true" />
     <property name="Downloaded.Files.Path" value="$PROJECT_DIR$/lib" />
   </component>
-  <component name="RunManager" selected="Application.DynamicStructure3">
-    <configuration default="false" name="Test2" type="Application" factoryName="Application" temporary="true">
-      <option name="MAIN_CLASS_NAME" value="Test2" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="untitled" />
-      <envs />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="DynamicStructure" type="Application" factoryName="Application" temporary="true">
-      <option name="MAIN_CLASS_NAME" value="DynamicStructure" />
+  <component name="RunManager" selected="Application.Main">
+    <configuration default="false" name="DynamicStructure3" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="DynamicStructure3" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -492,7 +413,29 @@
       <method />
     </configuration>
     <configuration default="false" name="Main" type="Application" factoryName="Application" temporary="true">
-      <option name="MAIN_CLASS_NAME" value="reductionengine.Main" />
+      <option name="MAIN_CLASS_NAME" value="reductionengine.gui.Main" />
+      <option name="VM_PARAMETERS" value="" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="reduction-engine" />
+      <envs />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="GraphLayout" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="GraphLayout" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -501,14 +444,14 @@
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="untitled" />
+      <module name="reduction-engine" />
       <envs />
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="DynamicStructure2" type="Application" factoryName="Application" temporary="true">
-      <option name="MAIN_CLASS_NAME" value="DynamicStructure2" />
+    <configuration default="false" name="GraphLayout2" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="graphutils.GraphLayout2" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -517,14 +460,14 @@
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="untitled" />
+      <module name="reduction-engine" />
       <envs />
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="DynamicStructure3" type="Application" factoryName="Application" temporary="true">
-      <option name="MAIN_CLASS_NAME" value="DynamicStructure3" />
+    <configuration default="false" name="GraphLayout3" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="graphutils.GraphLayout3" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -533,7 +476,7 @@
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="untitled" />
+      <module name="reduction-engine" />
       <envs />
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
@@ -575,19 +518,19 @@
       <method />
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Application.Test2" />
-      <item index="1" class="java.lang.String" itemvalue="Application.DynamicStructure" />
-      <item index="2" class="java.lang.String" itemvalue="Application.Main" />
-      <item index="3" class="java.lang.String" itemvalue="Application.DynamicStructure2" />
-      <item index="4" class="java.lang.String" itemvalue="Application.DynamicStructure3" />
+      <item index="0" class="java.lang.String" itemvalue="Application.DynamicStructure3" />
+      <item index="1" class="java.lang.String" itemvalue="Application.Main" />
+      <item index="2" class="java.lang.String" itemvalue="Application.GraphLayout" />
+      <item index="3" class="java.lang.String" itemvalue="Application.GraphLayout2" />
+      <item index="4" class="java.lang.String" itemvalue="Application.GraphLayout3" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Application.DynamicStructure3" />
-        <item index="1" class="java.lang.String" itemvalue="Application.DynamicStructure2" />
-        <item index="2" class="java.lang.String" itemvalue="Application.Main" />
-        <item index="3" class="java.lang.String" itemvalue="Application.DynamicStructure" />
-        <item index="4" class="java.lang.String" itemvalue="Application.Test2" />
+        <item index="0" class="java.lang.String" itemvalue="Application.Main" />
+        <item index="1" class="java.lang.String" itemvalue="Application.GraphLayout3" />
+        <item index="2" class="java.lang.String" itemvalue="Application.GraphLayout2" />
+        <item index="3" class="java.lang.String" itemvalue="Application.GraphLayout" />
+        <item index="4" class="java.lang.String" itemvalue="Application.DynamicStructure3" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
@@ -604,28 +547,48 @@
     </task>
     <servers />
   </component>
+  <component name="TodoView" selected-index="0">
+    <todo-panel id="selected-file">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="default-changelist">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="19" width="1280" height="781" extended-state="6" />
+    <frame x="1280" y="19" width="1920" height="1061" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24959481" sideWeight="0.3247734" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977587" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39978677" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.5" order="11" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31876332" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" x="0" y="19" width="1280" height="781" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32942432" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15261473" sideWeight="0.6801706" order="5" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977587" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2471637" sideWeight="0.67021275" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.3283582" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" x="-1" y="16" width="1280" height="781" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.19637139" sideWeight="0.6609808" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.3272921" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" x="-1" y="16" width="1280" height="781" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.3206687" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" x="0" y="19" width="1280" height="781" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -690,122 +653,112 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Editor.scala">
+    <entry file="file://$PROJECT_DIR$/src/graphutils/GraphLayout.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="0" selection-start="326" selection-end="326" vertical-scroll-proportion="0.0" />
+        <state line="133" column="78" selection-start="4348" selection-end="4387" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/DynamicStructure.scala">
+    <entry file="file://$PROJECT_DIR$/src/graphutils/GraphLayout3.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="654" column="22" selection-start="17352" selection-end="17521" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#1#26#0" expanded="true" />
-            <element signature="e#661#1208#1" expanded="false" />
-            <element signature="e#1396#2269#1" expanded="false" />
-            <element signature="e#2290#3414#1" expanded="false" />
-            <element signature="e#3439#3901#1" expanded="false" />
-            <element signature="e#3922#6028#1" expanded="false" />
-            <element signature="e#6056#7555#1" expanded="false" />
-            <element signature="e#7579#9824#1" expanded="false" />
-            <element signature="e#9842#10189#1" expanded="false" />
-            <element signature="e#10215#10598#1" expanded="false" />
-            <element signature="e#10615#12229#1" expanded="false" />
-            <element signature="e#12249#15332#1" expanded="false" />
-            <element signature="e#15347#17301#1" expanded="false" />
-            <element signature="e#16090#16107#0" expanded="true" />
-            <element signature="e#17327#17348#1" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Main.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="10" selection-start="63" selection-end="63" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Rendering.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="6" selection-start="82" selection-end="82" vertical-scroll-proportion="0.0" />
+        <state line="62" column="12" selection-start="2375" selection-end="2375" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Layout.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="0" selection-start="565" selection-end="565" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Keys.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="53" column="0" selection-start="1338" selection-end="1338" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Editing.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="2" selection-start="389" selection-end="389" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/GarbageCollection.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="58" selection-start="1426" selection-end="1426" vertical-scroll-proportion="0.0">
+        <state line="33" column="12" selection-start="1012" selection-end="1012" vertical-scroll-proportion="0.030110935">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/OurBubbles.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+        <state line="73" column="23" selection-start="2044" selection-end="2044" vertical-scroll-proportion="0.5784469" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Editing.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="63" column="2" selection-start="1540" selection-end="1540" vertical-scroll-proportion="0.020856202">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/untitled.iml">
+    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Bubbles.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/KindsOfBubbles.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="18" selection-start="1081" selection-end="1081" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/DynamicStructure3.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="40" selection-start="177" selection-end="177" vertical-scroll-proportion="0.0">
+        <state line="46" column="2" selection-start="1195" selection-end="1195" vertical-scroll-proportion="0.47859496">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reductionengine/logic/Nodes.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/DynamicStructure2.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="65" column="4" selection-start="1797" selection-end="1797" vertical-scroll-proportion="0.0">
+        <state line="20" column="0" selection-start="585" selection-end="585" vertical-scroll-proportion="0.41712403">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reductionengine/logic/Reductions.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="0" selection-start="581" selection-end="581" vertical-scroll-proportion="0.0">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reductionengine/logic/NodeUtils.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="60" selection-start="547" selection-end="547" vertical-scroll-proportion="0.37541163">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Main.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="9" selection-start="66" selection-end="66" vertical-scroll-proportion="0.10428101">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reductionengine/sugar/SugarNodes.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="84" column="13" selection-start="2303" selection-end="2303" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Rendering.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="2" selection-start="837" selection-end="837" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#30#47#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Reductions.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="3" selection-start="563" selection-end="563" vertical-scroll-proportion="0.8300971">
+        <state line="64" column="6" selection-start="1948" selection-end="1948" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/KindsOfBubbles.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="54" column="4" selection-start="1776" selection-end="1776" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Inputs.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="0" selection-start="185" selection-end="185" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#30#88#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reductionengine/sugar/Idioms.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="0" selection-start="128" selection-end="128" vertical-scroll-proportion="0.08342481">
           <folding />
         </state>
       </provider>
@@ -863,11 +816,12 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>Scala|untitled</last-edited>
+          <last-edited>reduction-engine</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
                 <option value="0.2" />
+                <option value="0.5" />
               </list>
             </option>
           </splitter-proportions>
@@ -875,7 +829,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>org.scala-lang:scala-compiler:2.9.3</last-edited>
+          <last-edited>org.apache.commons:commons-math3:3.1.1</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

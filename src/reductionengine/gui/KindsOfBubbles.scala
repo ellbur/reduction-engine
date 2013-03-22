@@ -1,45 +1,113 @@
 
 package reductionengine.gui
 
-trait KindsOfBubbles { this: Editor =>
-  case class App(
-                  var car: BubbleContainer,
-                  var cdr: BubbleContainer,
-                  var x: Int,
-                  var y: Int) extends Bubble with AppRender
-  {
-    def children = Seq(car, cdr)
-  }
-  object App {
-    def ~(a: Replacement, b: Replacement) = NewBubble((ch,x,y) => App(ch(0), ch(1), x, y), Seq(a, b))
-  }
+import java.awt.Graphics2D
+import reductionengine.{logic, sugar}
+import collection.mutable.ArrayBuffer
+import collection.mutable
+import javax.swing.JTextField
+import java.awt.event.{ActionEvent, ActionListener}
 
-  case class IntLiteral(
+trait KindsOfBubbles { this: Editor =>
+  class IntLiteral(
                          var n: Int,
                          var x: Int,
                          var y: Int) extends Bubble with IntLiteralRender
   {
-    def children = Seq()
+    def childEdges = Seq()
+    def toSugarNode = sugar.IntLiteral(n)
+  }
+  object IntLiteral {
+    def apply(n: Int, x: Int, y: Int) = new IntLiteral(n, x, y)
   }
 
-  case class Plus(var x: Int, var y: Int) extends Bubble with PlusRender
-  {
-    def children = Seq()
+  class ApicalOperator(var op: sugar.SugarOperator, var childBubbles: mutable.ArrayBuffer[Bubble], var x: Int, var y: Int)
+    extends Bubble with ApicalOperatorRender
+  { thisBubble =>
+    def childEdges = childBubbles.indices map { i =>
+      new Edge {
+        def target = childBubbles(i)
+        def substitute(`with`: Bubble) { childBubbles(i) = `with` }
+        override def deleteIfReasonable() {
+          if (i == childBubbles.length-1) {
+            childBubbles.remove(i)
+            if (childBubbles.length == 0) {
+              focusedBubble = Some(thisBubble)
+              focusedParent = identifyAParent(thisBubble)
+              focusedChild = identifyAChild(thisBubble)
+            }
+            else {
+              focusedBubble = Some(childBubbles(i - 1))
+              focusedParent = Some(thisBubble)
+              focusedChild = identifyAChild(childBubbles(i - 1))
+            }
+          }
+          else {
+            // TODO
+            message("Deleting inner parameters is not implemented.")
+          }
+        }
+      }
+    }
+    def toSugarNode = sugar.ApicalOperator(op, childBubbles.toSeq)
   }
-  object Plus {
-    def ~ = NewBubble((ch, x, y) => Plus(x, y), Seq())
+  object ApicalOperator {
+    def apply(op: sugar.SugarOperator, childBubbles: Seq[Bubble], x: Int, y: Int) =
+      new ApicalOperator(op, mutable.ArrayBuffer(childBubbles: _*), x, y)
   }
 
-  case class Root(var is: BubbleContainer, var x: Int, var y: Int) extends Bubble with RootRender
+  class Root(var is: Bubble, var x: Int, var y: Int) extends Bubble with RootRender
   {
-    def children = Seq(is)
+    def childEdges = Seq(basicEdge(is, is = _))
+    def toSugarNode = sugar.Root(is)
+  }
+  object Root {
+    def apply(is: Bubble, x: Int, y: Int) = new Root(is, x, y)
   }
 
-  case class Mystery(var x: Int, var y: Int) extends Bubble with MysteryRender
+  class Mystery(var n: Int, var x: Int, var y: Int) extends Bubble with MysteryRender
   {
-    def children = Seq()
+    def childEdges = Seq()
+    def toSugarNode = sugar.Mystery(n)
   }
   object Mystery {
-    def ~ = NewBubble((ch, x, y) => Mystery(x, y), Seq())
+    def apply(n: Int, x: Int, y: Int) = new Mystery(n, x, y)
+  }
+
+  class NumberEditor(id: Int, initially: String, var x: Int, var y: Int) extends Bubble with NumberEditorRender { thisBubble =>
+    val editor = new JTextField(initially, 6)
+
+    override val components = Seq(editor)
+
+    def go() {
+      editor.setLocation(x + 5, y + 5)
+      editor.setSize(editor.getPreferredSize)
+    }
+    go()
+    override def move(dx: Int, dy: Int) {
+      x += dx
+      y += dy
+      go()
+    }
+
+    override def receiveFocus() { editor.requestFocus() }
+
+    editor.addActionListener(new ActionListener {
+      def actionPerformed(p1: ActionEvent) {
+        try {
+          replace(thisBubble, sugar.NewNode(sugar.Focused(sugar.IntLiteral(editor.getText.toInt))))
+        }
+        catch {
+          case _: NumberFormatException =>
+            message("Not a number: " + editor.getText)
+        }
+      }
+    })
+
+    def childEdges = Seq()
+    def toSugarNode = sugar.NumberEditor(id, editor.getText)
+  }
+  object NumberEditor {
+    def apply(id: Int, initially: String, x: Int, y: Int) = new NumberEditor(id, initially, x, y)
   }
 }

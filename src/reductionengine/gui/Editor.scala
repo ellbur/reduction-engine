@@ -16,5 +16,5 @@ class Editor extends JPanel
   with GeometricMotion
   with Layout
   with Rendering
-  with Keys
+  with Inputs
   with SomeExperiments

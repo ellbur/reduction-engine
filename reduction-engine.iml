@@ -5,7 +5,6 @@
       <configuration>
         <option name="compilerLibraryLevel" value="Project" />
         <option name="compilerLibraryName" value="org.scala-lang:scala-compiler:2.10.1-RC3" />
-        <option name="compilerOptions" value="-Xexperimental" />
         <option name="deprecationWarnings" value="true" />
         <option name="uncheckedWarnings" value="true" />
       </configuration>
@@ -22,6 +21,7 @@
     <orderEntry type="library" name="com.miglayout:miglayout-core:4.2" level="project" />
     <orderEntry type="library" name="com.miglayout:miglayout-swing:4.2" level="project" />
     <orderEntry type="library" name="cc.co.scala-reactive:reactive-core_2.10:0.3.0" level="project" />
+    <orderEntry type="library" name="org.apache.commons:commons-math3:3.1.1" level="project" />
   </component>
 </module>
 

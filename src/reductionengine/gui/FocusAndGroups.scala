@@ -10,7 +10,7 @@ trait FocusAndGroups { this: Editor =>
       if (!(group contains child)) {
         group += child
         for (next <- child.children)
-          takeCareOf(next.bubble)
+          takeCareOf(next)
       }
     }
     takeCareOf(b)
@@ -18,5 +18,5 @@ trait FocusAndGroups { this: Editor =>
   }
 
   def currentGroup: Option[Traversable[Bubble]] =
-    focusedBubble map (b => computeGroup(b.bubble))
+    focusedBubble map (computeGroup(_))
 }

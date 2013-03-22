@@ -4,29 +4,19 @@ package reductionengine.logic
 trait Node[+T]
 
 case class App[+T](car: T, cdr: T) extends Node[T]
-object AppLike {
-  def unapply[N<:NodeLike[N]](n: N): Option[(N, N)] = n.toNode match {
-    case App(car, cdr) => Some((car, cdr))
-    case _ => None
-  }
-}
-
-case object Plus extends Node[Nothing]
-object PlusLike {
-  def unapply[N<:NodeLike[N]](n: N): Boolean = n.toNode match {
-    case Plus => true
-    case _ => false
-  }
-}
 
 case class IntLiteral(n: Int) extends Node[Nothing]
-object IntLiteralLike {
-  def unapply[N<:NodeLike[N]](n: N): Option[Int] = n.toNode match {
-    case IntLiteral(a) => Some(a)
-    case _ => None
-  }
-}
 
-trait NodeLike[N <: NodeLike[N]] {
-  def toNode: Node[N]
-}
+case class Mystery(id: Int) extends Node[Nothing]
+
+abstract class Operator(val name: String, val nArgs: Int)
+case object Plus extends Operator("+", 2)
+case object Times extends Operator("*", 2)
+case object Minus extends Operator("-", 2)
+case object S extends Operator("S", 3)
+case object K extends Operator("K", 2)
+case object I extends Operator("I", 1)
+case object Y extends Operator("Y", 2)
+case object B extends Operator("B", 2)
+
+case class OperatorLiteral(operator: Operator) extends Node[Nothing]

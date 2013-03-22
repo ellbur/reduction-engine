@@ -1,6 +1,7 @@
 
 import collection.mutable
 import collection.mutable.ArrayBuffer
+import graphutils.GraphLayout
 import java.awt.event._
 import java.awt.{BasicStroke, Graphics, Color, Graphics2D}
 import javax.swing._

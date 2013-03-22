@@ -2,16 +2,16 @@
 package reductionengine.gui
 
 trait DiagramMotion { this: Editor =>
-  def identifyAParent(of: BubbleContainer): Option[BubbleContainer] = {
-    for (b <- bubbles sortBy (_.bubble.x)) {
-      if (b.bubble.hasChild(of))
+  def identifyAParent(of: Bubble): Option[Bubble] = {
+    for (b <- bubbles sortBy (_.x)) {
+      if (b.hasChild(of))
         return Some(b);
     }
     return None
   }
 
-  def identifyAChild(of: Bubble): Option[BubbleContainer] = {
-    (of.children.toSeq sortBy (_.bubble.x)).toList match {
+  def identifyAChild(of: Bubble): Option[Bubble] = {
+    (of.children.toSeq sortBy (_.x)).toList match {
       case Nil => None
       case fst :: rest => Some(fst)
     }
@@ -47,7 +47,7 @@ trait DiagramMotion { this: Editor =>
         focusedParent = Some(bubble)
       }
       focusedBubble = Some(child)
-      focusedChild = identifyAChild(child.bubble)
+      focusedChild = identifyAChild(child)
 
       updateBubblyThings()
     }
@@ -60,7 +60,7 @@ trait DiagramMotion { this: Editor =>
         case None =>
           focusedParent = identifyAParent(bubble)
         case Some(parent) =>
-          val ps = bubble.parents.toIndexedSeq.sortBy(_.bubble.x)
+          val ps = bubble.parents.toIndexedSeq.sortBy(_.x)
           val here = ps.indexOf(parent)
           if (here != -1) {
             focusedParent = Some(ps((here + by + ps.length) % ps.length))
@@ -72,9 +72,9 @@ trait DiagramMotion { this: Editor =>
     focusedBubble foreach { bubble =>
       focusedChild match {
         case None =>
-          focusedChild = identifyAChild(bubble.bubble)
+          focusedChild = identifyAChild(bubble)
         case Some(child) =>
-          val chs = bubble.bubble.children.toIndexedSeq.sortBy(_.bubble.x)
+          val chs = bubble.children.toIndexedSeq.sortBy(_.x)
           val here = chs.indexOf(child)
           if (here != -1) {
             focusedChild = Some(chs((here + by + chs.length) % chs.length))
@@ -89,5 +89,13 @@ trait DiagramMotion { this: Editor =>
 
   def moveToRightBranch() {
     moveToBranch(+1)
+  }
+
+  def moveToNextHole() {
+    // TODO
+  }
+
+  def moveToPreviousHole() {
+    // TODO
   }
 }

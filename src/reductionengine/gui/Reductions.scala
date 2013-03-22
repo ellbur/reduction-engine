@@ -2,88 +2,80 @@
 package reductionengine.gui
 
 import scala.collection.mutable
-import scala.App
+import reductionengine.logic.{
+  StandardReductions, ReductionPossibility
+}
+import reductionengine.{logic, sugar}
+import reductionengine.sugar.{SugarReplacement, SugarNode}
 
 trait Reductions { this: Editor =>
-  object AppRed {
-    def unapply(b: Bubble): Option[(Bubble, Bubble)] = b match {
-      case a: App => Some((a.car.bubble, a.cdr.bubble))
-      case _ => None
-    }
-  }
+  type BubbleReplacement = SugarReplacement[Bubble]
 
-  object PlusRed {
-    def unapply(b: Bubble): Boolean = b match {
-      case _: Plus => true
-      case _ => false
-    }
-  }
+  def replace(at: Bubble, becomes: BubbleReplacement) {
+    val mapping = mutable.Map[BubbleReplacement,(Bubble, Option[Bubble])]()
+    val newBubbles = mutable.ArrayBuffer[Bubble]()
 
-  object IntLiteralRed {
-    def unapply(b: Bubble): Option[Int] = b match {
-      case i: IntLiteral => Some(i.n)
-      case _ => None
-    }
-  }
-
-  def findReductionPossibilities(at: BubbleContainer): Traversable[ReductionPossibility] = {
-    at.bubble match {
-      case AppRed(AppRed(PlusRed(), IntLiteralRed(a)), IntLiteralRed(b)) =>
-        List(new ReductionPossibility {
-          val description: String = "Perform addition"
-          def perform() {
-            replace(at, IntLiteral(a+b, _, _))
-          }
-        })
-      case _ => List()
-    }
-  }
-
-  trait ReductionPossibility {
-    val description: String
-    def perform(): Unit
-
-    override def toString = description.toString
-  }
-
-  type UnplacedBubble = (Int, Int) => Bubble
-
-  // TODO: expand with the possibility of putting in a whole tree.
-  def replace(at: BubbleContainer, becomes: UnplacedBubble) {
-    at.bubble = becomes(at.bubble.x, at.bubble.y)
-    runGC()
-  }
-
-  sealed trait Replacement
-  case class ExistingBubble(is: BubbleContainer) extends Replacement
-  case class NewBubble(willBe: (Seq[BubbleContainer], Int, Int) => Bubble, children: Seq[Replacement]) extends Replacement
-
-  def replace(at: BubbleContainer, becomes: Replacement) {
-    val newBubbles = mutable.Set[Bubble]()
-    val mapping = mutable.Map[Replacement,Bubble]()
-
-    def handle(r: Replacement): Bubble = {
-      mapping.get(r) match {
-        case Some(already) => already
-        case None =>
-          val bc = r match {
-            case ExistingBubble(it) => it.bubble
-            case NewBubble(willBe, children) =>
-              willBe(children map (c => BubbleContainer(handle(c))), at.bubble.x, at.bubble.y)
-          }
-
-          newBubbles += bc
-          mapping(r) = bc
-
-          bc
-      }
+    def handle(x: Int, y: Int, r: BubbleReplacement): (Bubble, Option[Bubble]) = {
+      mapping.getOrElseUpdate(r, r match {
+        case sugar.AlreadyThere(it) =>
+          newBubbles += it
+          (it, None)
+        case sugar.NewNode(node) =>
+          val (bub, foc) = translate(node, x, y, handle _)
+          newBubbles += bub
+          bubbles += bub
+          for (c <- bub.components)
+            canvas.add(c)
+          (bub, foc)
+      })
     }
 
-    at.bubble = handle(becomes)
+    val parentEdges = at.parentEdges
+    val (yo, focused) = handle(at.x, at.y, becomes)
+
+    for (e <- parentEdges)
+      e.substitute(yo)
+
+    setFocus(focused getOrElse yo)
 
     runGC()
+
+    reposition(newBubbles)
 
     updateBubblyThings()
+  }
+
+  def translate(n: SugarNode[BubbleReplacement],
+    x: Int, y: Int, handle: (Int, Int, BubbleReplacement) => (Bubble, Option[Bubble])): (Bubble, Option[Bubble]) =
+  {
+    import reductionengine.{sugar => s}
+    // Here we hand-by-hand translate the pure node representations to our GUI
+    // bubbles. I do not consider this to be poor design. In fact, I consider
+    // your mom to be poor design.
+
+    lazy val distScale = 5
+    lazy val jump = distScale * (1 << s.NewNode(n).height)
+
+    n match {
+      case s.IntLiteral(n) => (IntLiteral(n, x, y), None)
+      case s.Mystery(n) => (Mystery(n, x, y), None)
+      case s.Root(is) =>
+        val (a, f) = handle(x + distScale, y + distScale, is)
+        (Root(a, x, y), f)
+      case s.ApicalOperator(op, args) =>
+        val center = (args.length - 1).toDouble / 2.0
+        val (fArgs, bArgs) = {
+          args.zipWithIndex map {
+            case (arg, i) =>
+              handle(x + ((i - center) * jump).toInt, y + distScale, arg)
+          }
+        }.unzip
+        (ApicalOperator(op, fArgs, x, y), bArgs.flatten.headOption)
+      case s.NumberEditor(id, s) => (NumberEditor(id, s, x, y), None)
+      case s.Focused(is) =>
+        val (became, _) = translate(is, x, y, handle)
+        (became, Some(became))
+    }
   }
 
   def reduceCurrentNode() {
@@ -92,7 +84,12 @@ trait Reductions { this: Editor =>
         val available = findReductionPossibilities(bubble)
         available.headOption match {
           case Some(first) =>
-            first.perform()
+            replace(bubble,
+              sugar.SugarNode.translateDeep(first.remapping) match {
+                case x @ sugar.AlreadyThere(_) => x
+                case sugar.NewNode(n) => sugar.NewNode(sugar.Focused(n))
+              }
+            )
             updateBubblyThings()
           case None =>
             message("No reductions")
@@ -100,5 +97,11 @@ trait Reductions { this: Editor =>
       case None =>
         message("Nothing selected")
     }
+  }
+
+  def findReductionPossibilities(bc: Bubble):
+    Seq[ReductionPossibility[Bubble]] =
+  {
+    StandardReductions.find(logic.AlreadyThere(bc): logic.Replacement[Bubble]).toSeq
   }
 }
