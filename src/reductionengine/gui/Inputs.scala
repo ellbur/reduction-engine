@@ -61,8 +61,8 @@ trait Inputs { this: Editor =>
       bind('-', doOperator(s.BasicOperator(logic.Minus)))
       bind('*', doOperator(s.BasicOperator(logic.Times)))
 
-      bind('S', doOperator(s.BasicOperator(logic.S)))
-      bind('K', doOperator(s.BasicOperator(logic.K)))
+      bind('S', doOperator(s.BasicOperator(logic.S(1))))
+      bind('K', doOperator(s.BasicOperator(logic.K(1, Seq(false)))))
       bind('I', doOperator(s.BasicOperator(logic.I)))
       bind('Y', doOperator(s.BasicOperator(logic.Y)))
 

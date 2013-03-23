@@ -15,8 +15,8 @@ object SugarNode {
     n match {
       case logic.AlreadyThere(it) => AlreadyThere(it)
       case logic.NewNode(n) => NewNode(n match {
-        case logic.App(car, cdr) =>
-          ApicalOperator(B, Seq(t(car), t(cdr)))
+        case logic.App(idioms, car, cdr) =>
+          ??? // TODO
         case logic.IntLiteral(n) =>
           IntLiteral(n)
         case logic.OperatorLiteral(op) =>
@@ -48,18 +48,37 @@ case class ApicalOperator[+N](op: SugarOperator, args: Seq[N])
         NodeUtils.applyAll(args) match {
           case logic.NewNode(it) => it
           case it @ logic.AlreadyThere(_) =>
-            logic.App(NN(logic.OperatorLiteral(logic.I)), it)
+            logic.App(List(), NN(logic.OperatorLiteral(logic.I)), it)
         }
       case BasicOperator(op) =>
         NodeUtils.applyAllTo(logic.OperatorLiteral(op), args)
     }
   }
   val children = args
+
+  override def toString = op match {
+    case B =>
+      args.toList match {
+        case Nil => "I"
+        case List(x) => x.toString
+        case first :: rest => s"$first(${rest map (_.toString) mkString ", "})"
+      }
+    case op =>
+      s"$op(${args map (_.toString) mkString ", "}})"
+  }
 }
 
 object App {
   def apply[T](car: T, cdr: T): ApicalOperator[T] =
     ApicalOperator(B, Seq(car, cdr))
+}
+
+/**
+ * The goal is  that eventually this will be a replacement for ApicalOperator.
+ */
+case class IdiomaticJunction[+N](op: SugarOperator, args: IdiomaticReconciliation[N]) extends SugarNode[N] {
+  def toNode = ???
+  lazy val children = ???
 }
 
 case class Root[+N](is: N)(implicit nl: logic.NodeLike[N]) extends SugarNode[N] {
@@ -72,6 +91,12 @@ case class Mystery(id: Int) extends SugarNode[Nothing] {
   val children = Seq()
 }
 
+case class Open(id: String) extends SugarNode[Nothing] {
+  def toNode = logic.Mystery(0)
+  val children = Seq()
+  override def toString = id
+}
+
 case class NumberEditor(id: Int, progress: String) extends SugarNode[Nothing] {
   def toNode = logic.Mystery(id)
   val children = Seq()
@@ -82,8 +107,14 @@ case class Focused[+N](is: SugarNode[N]) extends SugarNode[N] {
   lazy val children = is.children
 }
 
-sealed trait SugarReplacement[+T] { val height: Int }
-case class AlreadyThere[+T](t: T) extends SugarReplacement[T] { val height = 0 }
+sealed trait SugarReplacement[+T] {
+  val height: Int
+  def apply[S >: T](cdr: SugarReplacement[S]) = NewNode(App(this, cdr))
+}
+case class AlreadyThere[+T](t: T) extends SugarReplacement[T] {
+  val height = 0
+  override def toString = "*"
+}
 case class NewNode[+T](s: SugarNode[SugarReplacement[T]]) extends SugarReplacement[T] {
   lazy val height = {
     val ch = s.children map (_.height)
@@ -92,4 +123,5 @@ case class NewNode[+T](s: SugarNode[SugarReplacement[T]]) extends SugarReplaceme
     else
       1 + ch.max
   }
+  override def toString = s.toString
 }
