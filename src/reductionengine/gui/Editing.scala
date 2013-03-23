@@ -3,7 +3,6 @@ package reductionengine.gui
 import language.postfixOps
 import reductionengine.{logic, sugar}
 import sugar.{NewNode => NN, AlreadyThere => AT, SugarReplacement, SugarNode}
-import sugar.SugarNode.{sugarReplacementNodeLike, noNeed}
 
 trait Editing { this: Editor =>
   var mysteryCounter: Int = 0
