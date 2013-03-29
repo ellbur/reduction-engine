@@ -66,6 +66,20 @@ trait Rendering { this: Editor =>
     val arity = op.nArgs
   }
 
+  trait PureRender extends BasicTextBubbleRender { this: Pure =>
+    def text = idiom.toString
+    val bgColor = new Color(200, 190, 255)
+    val fgColor = new Color(20, 20, 20)
+    val arity = 1
+  }
+
+  trait AntiPureRender extends BasicTextBubbleRender { this: AntiPure =>
+    def text = idiom.toString
+    val bgColor = new Color(200, 255, 190)
+    val fgColor = new Color(20, 20, 20)
+    val arity = 1
+  }
+
   trait IntLiteralRender extends BasicTextBubbleRender { this: IntLiteral =>
     def text = n.toString
     val bgColor = new Color(255, 255, 255)
@@ -86,18 +100,42 @@ trait Rendering { this: Editor =>
     }
   }
 
-  trait NumberEditorRender { this: NumberEditor =>
+  trait TextEditorRender { this: TextEditorBubble with Bubble =>
     def render(g: Graphics2D) = {
       val x1 = editor.getX - 5
       val y1 = editor.getY - 5
       val width = editor.getWidth + 10
       val height = editor.getHeight + 10
 
-      g.setColor(new Color(100, 100, 100))
+      g.setColor(bgColor)
       g.fillRoundRect(x1, y1, width, height, 5, 5)
 
-      BubbleRendering(new Rectangle(x1, y1, width, height), new Point(x1+width/2, y1), Seq())
+      val arity = children.toSeq.length
+
+      BubbleRendering(new Rectangle(x1, y1, width, height), new Point(x1+width/2, y1),
+        1 to arity map {
+          i =>
+            new Point(
+              (i.toDouble / (1 + arity).toDouble * width + x1).toInt,
+              y1 + height
+            )
+        }
+      )
     }
+
+    val bgColor: Color
+  }
+
+  trait NumberEditorRender extends TextEditorRender { this: NumberEditor =>
+    val bgColor = new Color(100, 100, 100)
+  }
+
+  trait AntiPureNameEditorRender extends TextEditorRender { this: AntiPureNameEditor =>
+    val bgColor = new Color(0, 0, 100)
+  }
+
+  trait PureNameEditorRender extends TextEditorRender { this: PureNameEditor =>
+    val bgColor = new Color(100, 0, 0)
   }
 
   trait MysteryRender extends BasicTextBubbleRender { this: Mystery =>

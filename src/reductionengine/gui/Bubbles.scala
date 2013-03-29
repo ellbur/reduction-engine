@@ -1,12 +1,16 @@
 
 package reductionengine.gui
 
-import java.awt.{Component, Rectangle, Graphics2D}
-import reductionengine.logic
-import reductionengine.sugar
-import reductionengine.sugar.SugarNode
+import java.awt.{Component, Graphics2D}
 
 trait Bubbles { this: Editor =>
+  object sugar extends reductionengine.sugar.Sugar {
+    type NodeType = Bubble
+    val nodeLike = bubbleNodeLike
+  }
+  import sugar.SugarNode
+  import sugar.logic
+
   trait Bubble extends {
     def children: Traversable[Bubble] = childEdges map (_.target)
     def childEdges: Traversable[Edge]
@@ -17,15 +21,15 @@ trait Bubbles { this: Editor =>
     def hasChild(b: Bubble): Boolean =
       ! children.find(_ == b).isEmpty
 
-    def haveFocus = focusedBubble map (_ == this) getOrElse false
+    def haveFocus = focusedBubble.now map (_ == this) getOrElse false
 
     def hasFocus = haveFocus
 
     def isFocusedParent: Boolean =
-      focusedParent map (_ == this) getOrElse false
+      focusedParent.now map (_ == this) getOrElse false
 
     def isFocusedChild =
-      focusedChild map (_ == this) getOrElse false
+      focusedChild.now map (_ == this) getOrElse false
 
     def parents: Traversable[Bubble] = bubbles filter (_.hasChild(this))
     def parentEdges: Traversable[Edge] =
@@ -33,8 +37,8 @@ trait Bubbles { this: Editor =>
 
     def render(g: Graphics2D): BubbleRendering
 
-    def toSugarNode: SugarNode[Bubble]
-    def toNode: logic.Node[logic.Replacement[Bubble]] = toSugarNode.toNode
+    def toSugarNode: SugarNode
+    def toNode: logic.Node = toSugarNode.toNode
 
     val components: Seq[Component] = Seq()
     def move(dx: Int, dy: Int) {
@@ -45,11 +49,8 @@ trait Bubbles { this: Editor =>
     def receiveFocus() { }
   }
 
-  implicit object bubbleNodeLike extends logic.NodeLike[Bubble] {
-    def toNode(rb: logic.Replacement[Bubble]) = rb match {
-      case logic.NewNode(n) => n
-      case logic.AlreadyThere(b) => b.toNode
-    }
+  object bubbleNodeLike extends logic.NodeLike {
+    def toNode(rb: Bubble) = rb.toNode
   }
 
   trait Edge {

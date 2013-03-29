@@ -1,10 +1,12 @@
 
 package reductionengine.gui
 import language.postfixOps
-import reductionengine.{logic, sugar}
-import sugar.{NewNode => NN, AlreadyThere => AT, SugarReplacement, SugarNode}
 
-trait Editing { this: Editor =>
+trait Editing { self: Editor =>
+  import sugar.RNode
+  import sugar.{NewNode => NN, AlreadyThere => AT}
+  import self.{sugar => s}
+
   var mysteryCounter: Int = 0
   def nextMysteryCounter: Int = {
     mysteryCounter += 1
@@ -15,18 +17,18 @@ trait Editing { this: Editor =>
   }
 
   def makeNewRootAtPoint(x: Int, y: Int) {
-    val mystery = Mystery(nextMysteryCounter, x + 50, y + 10)
+    val mystery = Mystery(nextMysteryCounter, x, y + 50)
     val it = Root(mystery, x, y)
     bubbles ++= Seq(it, mystery)
     roots += it
 
-    focusedBubble = Some(mystery)
-    focusedChild = None
-    focusedParent = Some(it)
+    focusedBubble() = Some(mystery)
+    focusedChild() = None
+    focusedParent() = Some(it)
   }
 
-  def fillAHole(replacing: Mystery => SugarReplacement[Bubble]) {
-    focusedBubble match {
+  def fillAHole(replacing: Mystery => RNode) {
+    focusedBubble.now match {
       case Some(it: Mystery) =>
         replace(it, replacing(it))
       case _ =>
@@ -39,7 +41,7 @@ trait Editing { this: Editor =>
       NN(sugar.ApicalOperator(op, 1 to op.nArgs map { i =>
         NN(
           if (i == 1)
-            sugar.Focused(nextMystery)
+            sugar.Focused(NN(nextMystery))
           else
             nextMystery
         )
@@ -49,7 +51,7 @@ trait Editing { this: Editor =>
 
   def doApp() {
     fillAHole(_ =>
-      NN(sugar.App(NN(sugar.Focused(nextMystery)), NN(nextMystery)))
+      NN(sugar.App(NN(sugar.Focused(NN(nextMystery))), NN(nextMystery)))
     )
   }
 
@@ -57,12 +59,12 @@ trait Editing { this: Editor =>
     val progress = `with` map (_.toString) getOrElse ""
 
     fillAHole(_ => NN(
-      sugar.Focused(sugar.NumberEditor(nextMysteryCounter, progress))
+      sugar.Focused(NN(sugar.NumberEditor(nextMysteryCounter, progress)))
     ))
   }
 
   def stripMystery() {
-    focusedBubble match {
+    focusedBubble.now match {
       case Some(it: Mystery) =>
         for (b <- bubbles)
           for (e <- b.childEdges if e.target==it) {
@@ -78,7 +80,7 @@ trait Editing { this: Editor =>
   }
 
   def clearToMystery() {
-    focusedBubble match {
+    focusedBubble.now match {
       case Some(it) =>
         replace(it, NN(nextMystery))
       case _ =>
@@ -87,7 +89,7 @@ trait Editing { this: Editor =>
   }
 
   def insertChild() {
-    focusedBubble match {
+    focusedBubble.now match {
       case Some(it: ApicalOperator) =>
         if (it.childBubbles.length < it.op.nArgs) {
           val cxs = (it.children map (_.x)).toSeq
@@ -107,9 +109,9 @@ trait Editing { this: Editor =>
           val ch = Mystery(nextMysteryCounter, x, y)
           bubbles += ch
           it.childBubbles += ch
-          focusedBubble = Some(ch)
-          focusedParent = Some(it)
-          focusedChild = None
+          focusedBubble() = Some(ch)
+          focusedParent() = Some(it)
+          focusedChild() = None
           reposition(it.children.toSeq)
         }
         else {
@@ -129,5 +131,25 @@ trait Editing { this: Editor =>
       case None =>
         message("No group selected.")
     }
+  }
+
+  def showBuryMenu() {
+    updateBuryChoices()
+  }
+
+  def showRecollectMenu() {
+    updateRecollectChoices()
+  }
+
+  def addAntiPure(idiom: sugar.KindOfIdiom, to: Bubble) {
+    replace(to, NN(s.Focused(
+      NN(s.AntiPureNameEditor(idiom, "", AT(to)))
+    )))
+  }
+
+  def addPure(idiom: sugar.KindOfIdiom, to: Bubble) {
+    replace(to, NN(s.Focused(
+      NN(s.PureNameEditor(idiom, "", AT(to)))
+    )))
   }
 }

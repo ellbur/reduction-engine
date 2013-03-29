@@ -1,127 +1,146 @@
 
 package reductionengine.sugar
 
-import reductionengine.logic
-import logic.{NewNode => NN, AlreadyThere => AT, Node, Replacement, NodeLike, NodeUtils}
+trait SugarNodes { self: Idioms =>
+  type NodeType
+  val nodeLike: logic.NodeLike
 
-trait SugarNode[+T] {
-  def toNode: logic.Node[logic.Replacement[T]]
-  val children: Traversable[T]
-}
-object SugarNode {
-  def translateDeep[T:logic.NodeLike](n: logic.Replacement[T]): SugarReplacement[T] = {
-    import SugarNode.{translateDeep => t}
+  type RNode = SugarReplacement
 
-    n match {
-      case logic.AlreadyThere(it) => AlreadyThere(it)
-      case logic.NewNode(n) => NewNode(n match {
-        case logic.App(idioms, car, cdr) =>
-          ??? // TODO
-        case logic.IntLiteral(n) =>
-          IntLiteral(n)
-        case logic.OperatorLiteral(op) =>
-          ApicalOperator(BasicOperator(op), Seq())
-        case logic.Mystery(n) =>
-          Mystery(n)
-        case _ =>
-          Mystery(0)
-      })
-    }
+  def toNode(r: RNode): logic.RNode = r match {
+    case AlreadyThere(it) => logic.AlreadyThere(it)
+    case NewNode(it) => logic.NewNode(it.toNode)
   }
-}
 
-case class IntLiteral(n: Int) extends SugarNode[Nothing] {
-  def toNode = logic.IntLiteral(n)
-  val children = Seq()
-}
-
-sealed abstract class SugarOperator(val name: String, val nArgs: Int)
-case class BasicOperator(op: logic.Operator) extends SugarOperator(op.name, op.nArgs)
-case object B extends SugarOperator("B", 2)
-
-case class ApicalOperator[+N](op: SugarOperator, args: Seq[N])
-  extends SugarNode[N]
-{
-  def toNode = {
-    op match {
-      case B =>
-        NodeUtils.applyAll(args) match {
-          case logic.NewNode(it) => it
-          case it @ logic.AlreadyThere(_) =>
-            logic.App(List(), NN(logic.OperatorLiteral(logic.I)), it)
-        }
-      case BasicOperator(op) =>
-        NodeUtils.applyAllTo(logic.OperatorLiteral(op), args)
-    }
+  object logic extends reductionengine.logic.Logic {
+    type IdiomType = self.Idiom
+    type NodeType = self.NodeType
+    val nodeLike = self.nodeLike
   }
-  val children = args
+  import logic.{NewNode => NN, AlreadyThere => AT, applyAll, applyAllTo}
 
-  override def toString = op match {
-    case B =>
-      args.toList match {
-        case Nil => "I"
-        case List(x) => x.toString
-        case first :: rest => s"$first(${rest map (_.toString) mkString ", "})"
+  sealed trait SugarNode {
+    val toNode: logic.Node
+    val children: Traversable[RNode]
+  }
+  object SugarNode {
+    def translateDeep(n: logic.RNode): RNode = {
+      import SugarNode.{translateDeep => t}
+
+      n match {
+        case logic.AlreadyThere(it)  => AlreadyThere(it)
+        case logic.NewNode(node)     => NewNode(node match {
+          case logic.App(car, cdr)         => App(t(car), t(cdr))
+          case logic.Pure(idiom, expr)     => Pure(idiom.rep, t(expr))
+          case logic.AntiPure(idiom, expr) => AntiPure(idiom.rep, t(expr))
+          case logic.IntLiteral(n)         => IntLiteral(n)
+          case logic.OperatorLiteral(op)   => ApicalOperator(BasicOperator(op), Seq())
+          case logic.Mystery(n)            => Mystery(n)
+        })
       }
-    case op =>
-      s"$op(${args map (_.toString) mkString ", "}})"
+    }
   }
-}
 
-object App {
-  def apply[T](car: T, cdr: T): ApicalOperator[T] =
-    ApicalOperator(B, Seq(car, cdr))
-}
-
-/**
- * The goal is  that eventually this will be a replacement for ApicalOperator.
- */
-case class IdiomaticJunction[+N](op: SugarOperator, args: IdiomaticReconciliation[N]) extends SugarNode[N] {
-  def toNode = ???
-  lazy val children = ???
-}
-
-case class Root[+N](is: N)(implicit nl: logic.NodeLike[N]) extends SugarNode[N] {
-  def toNode = nl.toNode(AT(is))
-  lazy val children = Seq(is)
-}
-
-case class Mystery(id: Int) extends SugarNode[Nothing] {
-  def toNode = logic.Mystery(id)
-  val children = Seq()
-}
-
-case class Open(id: String) extends SugarNode[Nothing] {
-  def toNode = logic.Mystery(0)
-  val children = Seq()
-  override def toString = id
-}
-
-case class NumberEditor(id: Int, progress: String) extends SugarNode[Nothing] {
-  def toNode = logic.Mystery(id)
-  val children = Seq()
-}
-
-case class Focused[+N](is: SugarNode[N]) extends SugarNode[N] {
-  def toNode = is.toNode
-  lazy val children = is.children
-}
-
-sealed trait SugarReplacement[+T] {
-  val height: Int
-  def apply[S >: T](cdr: SugarReplacement[S]) = NewNode(App(this, cdr))
-}
-case class AlreadyThere[+T](t: T) extends SugarReplacement[T] {
-  val height = 0
-  override def toString = "*"
-}
-case class NewNode[+T](s: SugarNode[SugarReplacement[T]]) extends SugarReplacement[T] {
-  lazy val height = {
-    val ch = s.children map (_.height)
-    if (ch.isEmpty)
-      0
-    else
-      1 + ch.max
+  case class IntLiteral(n: Int) extends SugarNode {
+    lazy val toNode = logic.IntLiteral(n)
+    lazy val children = Seq()
   }
-  override def toString = s.toString
+
+  sealed abstract class SugarOperator(val name: String, val nArgs: Int)
+  case class BasicOperator(op: logic.Operator) extends SugarOperator(op.name, op.nArgs)
+  case object B extends SugarOperator("B", 2)
+
+  case class ApicalOperator(op: SugarOperator, args: Seq[RNode])
+    extends SugarNode
+  {
+    lazy val toNode = {
+      println(3)
+      op match {
+        case B =>
+          applyAll(args map (self.toNode _)) match {
+            case NN(it) => it
+            case it @ AT(_) =>
+              logic.App(NN(logic.OperatorLiteral(logic.I)), it)
+          }
+        case BasicOperator(op) =>
+          val theArgs = args map (self.toNode(_))
+          val result = applyAllTo(logic.OperatorLiteral(op), args map (self.toNode _))
+          result
+      }
+    }
+    lazy val children = args.toSeq
+  }
+
+  object App {
+    def apply(car: RNode, cdr: RNode): ApicalOperator =
+      ApicalOperator(B, Seq(car, cdr))
+  }
+
+  case class Pure(idiom: Idiom, is: RNode) extends SugarNode {
+    lazy val toNode = logic.Pure(idiom.toLogic, self.toNode(is))
+    lazy val children = Seq(is)
+  }
+
+  case class AntiPure(idiom: Idiom, is: RNode) extends SugarNode {
+    lazy val toNode = logic.AntiPure(idiom.toLogic, self.toNode(is))
+    lazy val children = Seq(is)
+  }
+
+  case class Root(is: RNode) extends SugarNode {
+    lazy val toNode = logic.Mystery(0)
+    lazy val children = Seq(is)
+  }
+
+  case class Mystery(id: Int) extends SugarNode {
+    lazy val toNode = logic.Mystery(id)
+    lazy val children = Seq()
+  }
+
+  case class Open(id: String) extends SugarNode {
+    lazy val toNode = logic.Mystery(0)
+    lazy val children = Seq()
+    override lazy val toString = id
+  }
+
+  case class NumberEditor(id: Int, progress: String) extends SugarNode {
+    lazy val toNode = logic.Mystery(id)
+    lazy val children = Seq()
+  }
+
+  case class AntiPureNameEditor(idiomKind: KindOfIdiom, progress: String, of: RNode) extends SugarNode {
+    lazy val toNode = logic.Mystery(0)
+    lazy val children = Seq(of)
+  }
+
+  case class PureNameEditor(idiomKind: KindOfIdiom, progress: String, of: RNode) extends SugarNode {
+    lazy val toNode = logic.Mystery(0)
+    lazy val children = Seq(of)
+  }
+
+  case class Focused(is: RNode) extends SugarNode {
+    lazy val toNode = is match {
+      case AlreadyThere(it) => nodeLike.toNode(it)
+      case NewNode(node) => node.toNode
+    }
+    lazy val children = Seq(is)
+  }
+
+  sealed trait SugarReplacement {
+    val height: Int
+    def apply(cdr: SugarReplacement) = NewNode(App(this, cdr))
+  }
+  case class AlreadyThere(t: NodeType) extends SugarReplacement {
+    lazy val height = 0
+    override lazy val toString = "*"
+  }
+  case class NewNode(s: SugarNode) extends SugarReplacement {
+    lazy val height = {
+      val ch = s.children map (_.height)
+      if (ch.isEmpty)
+        0
+      else
+        1 + ch.max
+    }
+    override lazy val toString = s.toString
+  }
 }

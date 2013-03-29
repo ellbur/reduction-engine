@@ -3,10 +3,11 @@ package reductionengine.gui
 
 import javax.swing.{JComponent, AbstractAction, KeyStroke}
 import java.awt.event._
-import reductionengine.{logic, sugar => s}
-import reductionengine.sugar
 
-trait Inputs { this: Editor =>
+trait Inputs { self: Editor =>
+  import sugar.logic
+  import self.{sugar => s}
+
   trait SetupInputs { this: JComponent =>
     override def isFocusable = true
 
@@ -74,6 +75,9 @@ trait Inputs { this: Editor =>
 
       bind('f', reformatSubtree())
 
+      bind('b', showBuryMenu())
+      bind('c', showRecollectMenu())
+
       for (k <- '0' to '9') bind(k, beginTypingNumber(Some(k)))
       bind('#', beginTypingNumber(None))
 
@@ -82,13 +86,12 @@ trait Inputs { this: Editor =>
         def mouseClicked(p1: MouseEvent) {}
         def mouseEntered(p1: MouseEvent) {}
         def mousePressed(ev: MouseEvent) {
-          // TODO: Determine if we are on a bubble.
           if (ev.isControlDown) {
             makeNewRootAtPoint(ev.getX, ev.getY)
           }
           else {
             val here = bubbleAt(ev.getX, ev.getY)
-            focusedBubble = here
+            focusedBubble() = here
             pressingGroup = here map { bubble =>
               DraggedGroup(computeGroup(bubble), ev.getX, ev.getY)
             }

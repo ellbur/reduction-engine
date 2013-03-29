@@ -3,22 +3,51 @@ package reductionengine.gui
 
 import collection.mutable.ArrayBuffer
 import javax.swing.SwingWorker
-import reductionengine.logic.ReductionPossibility
-import reductionengine.logic
-import reductionengine.sugar.SugarReplacement
+import reactive.Var
 
 trait OurBubbles { this: Editor =>
+  import sugar.logic.ReductionPossibility
+  import sugar.{NewNode => NN, AlreadyThere => AT}
+  import sugar.logic
+
   val roots = ArrayBuffer[Bubble]()
   val bubbles = ArrayBuffer[Bubble]()
 
-  var focusedBubble = Option[Bubble](null)
-  var focusedChild = Option[Bubble](null)
-  var focusedParent = Option[Bubble](null)
+  val focusedBubble = Var[Option[Bubble]](None)
+  val focusedChild = Var[Option[Bubble]](None)
+  val focusedParent = Var[Option[Bubble]](None)
+
+  val K = NN(sugar.ApicalOperator(sugar.BasicOperator(logic.K(1, Seq(false))), Seq()))
+  val S = NN(sugar.ApicalOperator(sugar.BasicOperator(logic.S(1)), Seq()))
+  val standardIdiomKinds = Seq(
+    sugar.KindOfIdiom("Var", K, S)
+  )
+
+  val buryChoices = Var[Option[(Bubble, Seq[sugar.KindOfIdiom])]](None)
+  def updateBuryChoices() {
+    focusedBubble.now foreach { here =>
+      buryChoices() = Some((here, standardIdiomKinds))
+    }
+  }
+  def clearBuryChoices() { buryChoices() = None }
+
+  val recollectChoices = Var[Option[(Bubble, Seq[sugar.KindOfIdiom])]](None)
+  def updateRecollectChoices() {
+    focusedBubble.now foreach { here =>
+      recollectChoices() = Some((here, standardIdiomKinds))
+    }
+  }
+  def clearRecollectChoices() { recollectChoices() = None }
+
+  focusedBubble.change foreach { now =>
+    clearBuryChoices()
+    clearRecollectChoices()
+  }
 
   def setFocus(b: Bubble) {
-    focusedBubble = Some(b)
-    focusedChild = identifyAChild(b)
-    focusedParent = identifyAParent(b)
+    focusedBubble() = Some(b)
+    focusedChild() = identifyAChild(b)
+    focusedParent() = identifyAParent(b)
     b.receiveFocus()
   }
 
@@ -26,18 +55,23 @@ trait OurBubbles { this: Editor =>
     updateFocusedReductions()
   }
 
-  type RPB = ReductionPossibility[Bubble]
+  type RPB = ReductionPossibility
 
-  var focusedReductions: Traversable[RPB] = Seq()
+  val focusedReductions = Var[Option[(Bubble, Seq[RPB])]](None)
   def updateFocusedReductions() {
-    focusedReductions = Seq()
-    val worker = new SwingWorker[Traversable[RPB],Any] {
-      def doInBackground =
-        focusedBubble.toTraversable flatMap (findReductionPossibilities(_))
+    println(1)
+    focusedReductions() = None
+    val worker = new SwingWorker[Option[(Bubble, Seq[RPB])],Any] {
+      def doInBackground = {
+        println(2)
+        focusedBubble.now map { bubble =>
+          (bubble, findReductionPossibilities(bubble))
+        }
+      }
 
       override def done() {
-        focusedReductions = get()
-        repaint()
+        val were = get()
+        focusedReductions() = were
       }
     }
     worker.execute()
@@ -47,35 +81,28 @@ trait OurBubbles { this: Editor =>
    * Move some bubbles around in (x, y) in order
    */
   def reposition(toMoveP: Seq[Bubble]) {
-    import graphutils.{GraphLayout3 => GL}
-    import GL.{Child, MovableNode}
-    import GL.{FixedNode, FixedChild, MovableChild}
+    import graphutils.{GraphLayout4 => GL}
 
-    val toMove = toMoveP.intersect(bubbles).toIndexedSeq
-    val fixed = bubbles -- toMove
+    val moved = toMoveP.toSet
 
-    val toMoveMap: Map[Bubble,Int] = toMove.zipWithIndex.toMap
-    val fixedMap = fixed.zipWithIndex.toMap
+    val bubbleToK = bubbles.zipWithIndex.toMap
 
-    def bubbleToChild(b: Bubble): Child =
-      toMoveMap.get(b) match {
-        case Some(n) => MovableChild(n)
-        case None => FixedChild(fixedMap(b))
-      }
+    case class Datum(x: Double, y: Double, adj: Seq[Int], dist: Boolean)
+    val data = bubbles map { b =>
+      Datum(b.x, b.y, (b.children map (bubbleToK(_))).toSeq, moved contains b)
+    }
 
-    val movableNodes = (toMove map { bubble =>
-      MovableNode(bubble.x, bubble.y, (bubble.children map bubbleToChild _).toSeq)
-    }).toIndexedSeq
+    val scale = 40.0
+    val origPosition = data map (d => (d.x, d.y))
+    val adjacency = data map (_.adj)
+    val disturbed = data map (_.dist)
 
-    val fixedNodes = (fixed map { bubble =>
-      FixedNode(bubble.x, bubble.y, (bubble.children map bubbleToChild _).toSeq)
-    }).toIndexedSeq
+    val newPos = GL.computeLayout(scale=scale, origPosition=origPosition,
+      adjacency=adjacency, disturbed=disturbed)
 
-    val newPositions = GL.computeLayout(movableNodes, fixedNodes, 30.0, 50.0)
-
-    toMove zip newPositions foreach {
-      case (bubble, pos) =>
-        bubble.move(pos.x.toInt - bubble.x, pos.y.toInt - bubble.y)
+    newPos zip bubbles foreach {
+      case ((x, y), b) =>
+        b.move((x - b.x).toInt, (y - b.y).toInt)
     }
   }
 }

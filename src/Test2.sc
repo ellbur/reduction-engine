@@ -15,10 +15,11 @@ val eJ = NN(OperatorLiteral(J))
 val eE = NN(OperatorLiteral(E))
 
 def n(x: Int) = NN(IntLiteral(x))
-val expr1 = NN(App(Nil, eI, n(3)))
+val expr1 = NN(App(eI, n(3)))
 
 
 StandardReductions.find[Nothing](expr1)
+
 
 
 
@@ -27,62 +28,80 @@ val A = Idiom("A", NN(Mystery(0)), NN(Mystery(1)))
 
 val B = Idiom("B", NN(Mystery(0)), NN(Mystery(1)))
 
-/*
-val expr2 = NN(App(List(A), eI, n(3)))
-
+// Used to be:
+// val expr2 = NN(App(List(A), eI, n(3)))
+val expr2 = NN(Pure(A,
+  NN(App(
+    NN(AntiPure(A, eI)),
+    NN(AntiPure(A, n(3)))
+  ))
+))
 
 
 StandardReductions.find[Nothing](expr2)
 
-val expr3 = NN(App(List(A), NN(Pure(A, eI)), n(3)))
-
+// Used to be:
+// val expr3 = NN(App(List(A), NN(Pure(A, eI)), n(3)))
+val expr3 = NN(Pure(A,
+  NN(App(
+    eI,
+    NN(AntiPure(A, n(3)))
+  ))
+))
 
 
 StandardReductions.find[Nothing](expr3)
 
-
-val expr4 = NN(App(
-  List(A, B),
-  NN(Pure(A, NN(Pure(B, eI)))),
-  n(3)
-))
-
-
-
+val expr4 = NN(Pure(A, NN(Pure(B,
+ NN(App(
+  eI,
+  NN(AntiPure(B, NN(AntiPure(A,
+    n(3)
+  ))))
+ ))
+))))
 
 
 StandardReductions.find[Nothing](expr4)
-*/
+
 
 // The non-idiomatic form of the E-J rule.
 val expr6 = NN(App(
-  List(),
   eE,
   NN(App(
-    List(),
     eJ,
     n(3)
   ))
 ))
 
+
 StandardReductions.find[Nothing](expr6)
 
+
 // A complicated idiomatic form.
-val expr5 = NN(App(
-  List(B, A),
-  NN(Pure(B, NN(Pure(A, eE)))),
-  NN(Pure(B, NN(App(
-    List(A),
-    NN(Pure(A, eJ)),
-    n(3)
-  ))))
-))
-
-
-
+val expr5 = NN(Pure(A, NN(Pure(B,
+  NN(App(
+    eE,
+    NN(App(
+      eJ,
+      NN(AntiPure(A, n(3)))
+    ))
+  ))
+))))
 
 
 StandardReductions.find[Nothing](expr5)
+
+
+val expr7 = NN(Pure(A,
+  NN(App(
+    eI,
+    NN(AntiPure(A, n(3)))
+  ))
+))
+
+
+StandardReductions.find[Nothing](expr7)
 
 
 "Hello!"

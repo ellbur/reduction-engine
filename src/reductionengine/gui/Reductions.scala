@@ -2,20 +2,19 @@
 package reductionengine.gui
 
 import scala.collection.mutable
-import reductionengine.logic.{
-  StandardReductions, ReductionPossibility
-}
-import reductionengine.{logic, sugar}
-import reductionengine.sugar.{SugarReplacement, SugarNode}
 
-trait Reductions { this: Editor =>
-  type BubbleReplacement = SugarReplacement[Bubble]
+trait Reductions { self: Editor =>
+  import sugar.RNode
+  import sugar.SugarNode
+  import sugar.logic
+  import sugar.{NewNode => NN}
+  import logic.ReductionPossibility
 
-  def replace(at: Bubble, becomes: BubbleReplacement) {
-    val mapping = mutable.Map[BubbleReplacement,(Bubble, Option[Bubble])]()
+  def replace(at: Bubble, becomes: RNode) {
+    val mapping = mutable.Map[RNode,(Bubble, Option[Bubble])]()
     val newBubbles = mutable.ArrayBuffer[Bubble]()
 
-    def handle(x: Int, y: Int, r: BubbleReplacement): (Bubble, Option[Bubble]) = {
+    def handle(x: Int, y: Int, r: RNode): (Bubble, Option[Bubble]) = {
       mapping.getOrElseUpdate(r, r match {
         case sugar.AlreadyThere(it) =>
           newBubbles += it
@@ -45,10 +44,11 @@ trait Reductions { this: Editor =>
     updateBubblyThings()
   }
 
-  def translate(n: SugarNode[BubbleReplacement],
-    x: Int, y: Int, handle: (Int, Int, BubbleReplacement) => (Bubble, Option[Bubble])): (Bubble, Option[Bubble]) =
+  def translate(n: SugarNode,
+    x: Int, y: Int, handle: (Int, Int, RNode) => (Bubble, Option[Bubble])): (Bubble, Option[Bubble]) =
   {
-    import reductionengine.{sugar => s}
+    import self.{sugar => s}
+
     // Here we hand-by-hand translate the pure node representations to our GUI
     // bubbles. I do not consider this to be poor design. In fact, I consider
     // your mom to be poor design.
@@ -59,6 +59,7 @@ trait Reductions { this: Editor =>
     n match {
       case s.IntLiteral(n) => (IntLiteral(n, x, y), None)
       case s.Mystery(n) => (Mystery(n, x, y), None)
+      case s.Open(id) => (Mystery(0, x, y), None)
       case s.Root(is) =>
         val (a, f) = handle(x + distScale, y + distScale, is)
         (Root(a, x, y), f)
@@ -71,25 +72,33 @@ trait Reductions { this: Editor =>
           }
         }.unzip
         (ApicalOperator(op, fArgs, x, y), bArgs.flatten.headOption)
+      case s.Pure(idiom, expr) =>
+        val (a, f) = handle(x, y + distScale, expr)
+        (Pure(idiom, a, x, y), f)
+      case s.AntiPure(idiom, expr) =>
+        val (a, f) = handle(x, y + distScale, expr)
+        (AntiPure(idiom, a, x, y), f)
       case s.NumberEditor(id, s) => (NumberEditor(id, s, x, y), None)
+      case s.AntiPureNameEditor(idiomKind, progress, of) =>
+        val (of_, f) = handle(x, y + distScale, of)
+        (AntiPureNameEditor(idiomKind, progress, of_, x, y), f)
+      case s.PureNameEditor(idiomKind, progress, of) =>
+        val (of_, f) = handle(x, y + distScale, of)
+        (PureNameEditor(idiomKind, progress, of_, x, y), f)
       case s.Focused(is) =>
-        val (became, _) = translate(is, x, y, handle)
+        val (became, _) = handle(x, y, is)
         (became, Some(became))
     }
   }
 
   def reduceCurrentNode() {
-    focusedBubble match {
+    focusedBubble.now match {
       case Some(bubble) =>
         val available = findReductionPossibilities(bubble)
         available.headOption match {
           case Some(first) =>
-            replace(bubble,
-              sugar.SugarNode.translateDeep(first.remapping) match {
-                case x @ sugar.AlreadyThere(_) => x
-                case sugar.NewNode(n) => sugar.NewNode(sugar.Focused(n))
-              }
-            )
+            val transed = sugar.SugarNode.translateDeep(first.remapping)
+            replace(bubble, NN(sugar.Focused(transed)))
             updateBubblyThings()
           case None =>
             message("No reductions")
@@ -100,8 +109,8 @@ trait Reductions { this: Editor =>
   }
 
   def findReductionPossibilities(bc: Bubble):
-    Seq[ReductionPossibility[Bubble]] =
+    Seq[ReductionPossibility] =
   {
-    StandardReductions.find(logic.AlreadyThere(bc): logic.Replacement[Bubble]).toSeq
+    logic.StandardReductions.find(logic.AlreadyThere(bc): logic.RNode).toSeq
   }
 }

@@ -18,12 +18,12 @@ trait DiagramMotion { this: Editor =>
   }
 
   def moveToParent() {
-    focusedParent foreach { parent =>
-      focusedBubble foreach { bubble =>
-        focusedChild = Some(bubble)
+    focusedParent.now foreach { parent =>
+      focusedBubble.now foreach { bubble =>
+        focusedChild() = Some(bubble)
       }
-      focusedBubble = Some(parent)
-      focusedParent = identifyAParent(parent)
+      focusedBubble() = Some(parent)
+      focusedParent() = identifyAParent(parent)
 
       updateBubblyThings()
     }
@@ -42,12 +42,12 @@ trait DiagramMotion { this: Editor =>
   }
 
   def moveToChild() {
-    focusedChild foreach { child =>
-      focusedBubble foreach { bubble =>
-        focusedParent = Some(bubble)
+    focusedChild.now foreach { child =>
+      focusedBubble.now foreach { bubble =>
+        focusedParent() = Some(bubble)
       }
-      focusedBubble = Some(child)
-      focusedChild = identifyAChild(child)
+      focusedBubble() = Some(child)
+      focusedChild() = identifyAChild(child)
 
       updateBubblyThings()
     }
@@ -55,29 +55,29 @@ trait DiagramMotion { this: Editor =>
 
   def moveToBranch(by: Int) {
     // Move the parent pointer
-    focusedBubble foreach { bubble =>
-      focusedParent match {
+    focusedBubble.now foreach { bubble =>
+      focusedParent.now match {
         case None =>
-          focusedParent = identifyAParent(bubble)
+          focusedParent() = identifyAParent(bubble)
         case Some(parent) =>
           val ps = bubble.parents.toIndexedSeq.sortBy(_.x)
           val here = ps.indexOf(parent)
           if (here != -1) {
-            focusedParent = Some(ps((here + by + ps.length) % ps.length))
+            focusedParent() = Some(ps((here + by + ps.length) % ps.length))
           }
       }
     }
 
     // Move the child pointer
-    focusedBubble foreach { bubble =>
-      focusedChild match {
+    focusedBubble.now foreach { bubble =>
+      focusedChild.now match {
         case None =>
-          focusedChild = identifyAChild(bubble)
+          focusedChild() = identifyAChild(bubble)
         case Some(child) =>
           val chs = bubble.children.toIndexedSeq.sortBy(_.x)
           val here = chs.indexOf(child)
           if (here != -1) {
-            focusedChild = Some(chs((here + by + chs.length) % chs.length))
+            focusedChild() = Some(chs((here + by + chs.length) % chs.length))
           }
       }
     }
