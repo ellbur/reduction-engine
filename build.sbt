@@ -7,3 +7,7 @@ scalacOptions ++= Seq(
     "-feature"
 )
 
+seq(ProguardPlugin.proguardSettings :_*)
+
+proguardOptions += keepMain("reductionengine.gui.AppletMain")
+

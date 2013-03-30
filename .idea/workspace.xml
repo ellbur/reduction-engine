@@ -4,7 +4,7 @@
     <list default="true" id="308b10c8-c3d2-4600-96b7-7b17a08968e0" name="Default" comment="" />
     <ignored path="untitled.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Main.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1364391125555" ignored="false" />
+    <file path="/Main.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1364592432868" ignored="false" />
     <file path="/a.java" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362295446545" ignored="false" />
     <file path="/sample.java" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362121923840" ignored="false" />
     <file path="/Structure.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362295654071" ignored="false" />
@@ -38,7 +38,7 @@
     <file path="$PROJECT_DIR$/target/resolution-cache/reports/default-default-98f950_2.10/test-resolved.xml" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362813945632" ignored="false" />
     <file path="$PROJECT_DIR$/target/resolution-cache/reports/default-default-98f950_2.10/test-internal-resolved.xml" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1362813945632" ignored="false" />
     <file path="/Nodes.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1364451616613" ignored="false" />
-    <file path="/Inputs.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1364179942547" ignored="false" />
+    <file path="/Inputs.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1364593499714" ignored="false" />
     <file path="/SugarNodes.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1364573056151" ignored="false" />
     <file path="/GraphLayout2.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363560899712" ignored="false" />
     <file path="/GraphLayout3.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1363667772186" ignored="false" />
@@ -51,6 +51,9 @@
     <file path="/Sugar.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1364102910991" ignored="false" />
     <file path="/Burying.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1364173974178" ignored="false" />
     <file path="/GraphLayout4.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1364393156437" ignored="false" />
+    <file path="/AppletMain.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1364579440979" ignored="false" />
+    <file path="/org_scala_lang_scala_compiler_2_10_1_RC3.xml" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1364590816421" ignored="false" />
+    <file path="$PROJECT_DIR$/../focus-test/src/focustest/Main.scala" changelist="308b10c8-c3d2-4600-96b7-7b17a08968e0" time="1364592433568" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,6 +73,8 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
+    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -104,8 +109,6 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </breakpoint_any>
-    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true" />
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -116,10 +119,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="SugarNodes.scala" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/reductionengine/sugar/SugarNodes.scala">
+      <file leaf-file-name="Inputs.scala" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Inputs.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="126" column="2" selection-start="3844" selection-end="3844" vertical-scroll-proportion="0.26488096">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -135,9 +138,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/reductionengine/gui/FocusAndGroups.scala" />
-        <option value="$PROJECT_DIR$/src/reductionengine/gui/Editor.scala" />
-        <option value="$PROJECT_DIR$/src/reductionengine/gui/Inputs.scala" />
         <option value="$PROJECT_DIR$/src/reductionengine/gui/Burying.scala" />
         <option value="$PROJECT_DIR$/src/reductionengine/gui/Layout.scala" />
         <option value="$PROJECT_DIR$/src/reductionengine/gui/Editing.scala" />
@@ -151,6 +151,9 @@
         <option value="$PROJECT_DIR$/src/reductionengine/logic/Nodes.scala" />
         <option value="$PROJECT_DIR$/src/reductionengine/gui/OurBubbles.scala" />
         <option value="$PROJECT_DIR$/src/reductionengine/sugar/SugarNodes.scala" />
+        <option value="$PROJECT_DIR$/src/reductionengine/gui/AppletMain.scala" />
+        <option value="$PROJECT_DIR$/.idea/libraries/org_scala_lang_scala_compiler_2_10_1_RC3.xml" />
+        <option value="$PROJECT_DIR$/src/reductionengine/gui/Inputs.scala" />
       </list>
     </option>
   </component>
@@ -336,7 +339,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -365,17 +367,50 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
+              <option name="myItemId" value="compile-lib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="reduction-engine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="reduction-engine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value=".idea" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="reduction-engine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="reduction-engine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value=".idea" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="libraries" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
       <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
@@ -592,17 +627,17 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32908705" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2705443" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" x="0" y="19" width="1280" height="781" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32930514" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15261473" sideWeight="0.6801706" order="5" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977587" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="393" y="66" width="494" height="686" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.19637139" sideWeight="0.6609808" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27147487" sideWeight="0.33236152" order="6" side_tool="false" content_ui="tabs" x="-1" y="16" width="1280" height="781" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.3517018" sideWeight="0.6609808" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27147487" sideWeight="0.33236152" order="6" side_tool="false" content_ui="tabs" x="-1" y="16" width="1280" height="781" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32944608" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26985413" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" x="0" y="19" width="1280" height="781" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
     </layout>
@@ -667,39 +702,9 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Inputs.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="78" column="26" selection-start="2153" selection-end="2153" vertical-scroll-proportion="0.32829374" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Layout.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="147" column="50" selection-start="4486" selection-end="4486" vertical-scroll-proportion="0.3326226" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Editing.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="145" column="16" selection-start="3392" selection-end="3392" vertical-scroll-proportion="0.5138593" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/graphutils/GraphLayout3.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="226" column="19" selection-start="7338" selection-end="7338" vertical-scroll-proportion="0.5089286" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Main.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="8" selection-start="65" selection-end="65" vertical-scroll-proportion="0.14548239" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Rendering.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state line="181" column="4" selection-start="5340" selection-end="5340" vertical-scroll-proportion="0.3896373" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/graphutils/GraphLayout4.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="84" column="83" selection-start="2406" selection-end="2406" vertical-scroll-proportion="0.72435236" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/KindsOfBubbles.scala">
@@ -732,23 +737,57 @@
         <state line="14" column="27" selection-start="276" selection-end="276" vertical-scroll-proportion="0.36058393" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/OurBubbles.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="26" selection-start="1610" selection-end="1610" vertical-scroll-proportion="0.11309524" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Reductions.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="9" selection-start="1088" selection-end="1088" vertical-scroll-proportion="0.027737226">
-          <folding>
-            <marker date="1364353093000" expanded="false" signature="3298:3330" placeholder="..." />
-          </folding>
-        </state>
+        <state line="45" column="9" selection-start="1088" selection-end="1088" vertical-scroll-proportion="0.027737226" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reductionengine/sugar/SugarNodes.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="126" column="2" selection-start="3844" selection-end="3844" vertical-scroll-proportion="0.26488096">
+        <state line="20" column="2" selection-start="531" selection-end="531" vertical-scroll-proportion="0.5654762">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/AppletMain.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="0" selection-start="107" selection-end="107" vertical-scroll-proportion="0.22189781" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/OurBubbles.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="84" column="4" selection-start="2267" selection-end="2267" vertical-scroll-proportion="0.15178572">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/compiler.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/scala_compiler.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="4" selection-start="101" selection-end="101" vertical-scroll-proportion="0.084821425" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/libraries/org_scala_lang_scala_compiler_2_10_1_RC3.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="16" selection-start="520" selection-end="520" vertical-scroll-proportion="0.3110119" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Layout.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="0" selection-start="332" selection-end="332" vertical-scroll-proportion="0.3392857">
+          <folding>
+            <element signature="e#30#50#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Inputs.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -806,12 +845,11 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>reduction-engine</last-edited>
+          <last-edited>Scala|reduction-engine</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
                 <option value="0.2" />
-                <option value="0.5" />
               </list>
             </option>
           </splitter-proportions>
@@ -819,7 +857,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>org.apache.commons:commons-math3:3.1.1</last-edited>
+          <last-edited>cc.co.scala-reactive:reactive-core_2.10:0.3.0</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

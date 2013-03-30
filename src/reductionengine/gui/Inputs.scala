@@ -9,7 +9,7 @@ trait Inputs { self: Editor =>
   import self.{sugar => s}
 
   trait SetupInputs { this: JComponent =>
-    override def isFocusable = true
+    setFocusable(true)
 
     var actionCounter: Int = 0
 
@@ -86,6 +86,8 @@ trait Inputs { self: Editor =>
         def mouseClicked(p1: MouseEvent) {}
         def mouseEntered(p1: MouseEvent) {}
         def mousePressed(ev: MouseEvent) {
+          requestFocus()
+
           if (ev.isControlDown) {
             makeNewRootAtPoint(ev.getX, ev.getY)
           }
