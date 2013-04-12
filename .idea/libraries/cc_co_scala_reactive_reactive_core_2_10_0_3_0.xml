@@ -2,7 +2,7 @@
   <library name="cc.co.scala-reactive:reactive-core_2.10:0.3.0" type="repository">
     <properties maven-id="cc.co.scala-reactive:reactive-core_2.10:0.3.0" />
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/reactive-core_2.10-0.3.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/main-lib/reactive-core_2.10-0.3.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/scala-library-2.10.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/scala-actors-2.10.0.jar!/" />
     </CLASSES>

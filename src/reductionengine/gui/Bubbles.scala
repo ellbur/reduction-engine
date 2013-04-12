@@ -1,65 +1,57 @@
 
 package reductionengine.gui
 
-import java.awt.{Component, Rectangle, Graphics2D}
-import reductionengine.logic
-import reductionengine.sugar
-import reductionengine.sugar.SugarNode
+import java.awt.{Point, Component, Graphics2D}
+import reactive.Var
 
 trait Bubbles { this: Editor =>
-  trait Bubble extends {
-    def children: Traversable[Bubble] = childEdges map (_.target)
-    def childEdges: Traversable[Edge]
+  object sugar extends reductionengine.sugar.Sugar {
+    type NodeType = Bubble
+  }
+  import sugar.SugarNode
+  import sugar.logic
 
-    var x: Int
-    var y: Int
+  trait Bubble extends logic.NodeLike with sugar.SugarNodeLike {
+    lazy val children: Seq[Bubble] = childEdges map (_.target)
+    val childEdges: Seq[Edge]
 
-    def hasChild(b: Bubble): Boolean =
-      ! children.find(_ == b).isEmpty
+    def withChildren(children: Seq[Bubble]): Bubble
+    def transformChildren(f: Seq[Bubble] => Seq[Bubble]) = withChildren(f(children))
+    def hasChild(c: Bubble) = children.exists(_ == c)
 
-    def haveFocus = focusedBubble map (_ == this) getOrElse false
+    val toSugarNode: SugarNode
+    lazy val toNode: logic.Node = toSugarNode.toNode
 
-    def hasFocus = haveFocus
-
-    def isFocusedParent: Boolean =
-      focusedParent map (_ == this) getOrElse false
-
-    def isFocusedChild =
-      focusedChild map (_ == this) getOrElse false
-
-    def parents: Traversable[Bubble] = bubbles filter (_.hasChild(this))
-    def parentEdges: Traversable[Edge] =
-      bubbles flatMap (_.childEdges) filter (_.target == this)
-
-    def render(g: Graphics2D): BubbleRendering
-
-    def toSugarNode: SugarNode[Bubble]
-    def toNode: logic.Node[logic.Replacement[Bubble]] = toSugarNode.toNode
-
-    val components: Seq[Component] = Seq()
-    def move(dx: Int, dy: Int) {
-      x += dx
-      y += dy
-    }
-
-    def receiveFocus() { }
+    def edit(startX: Int, startY: Int): BubbleEditing
   }
 
-  implicit object bubbleNodeLike extends logic.NodeLike[Bubble] {
-    def toNode(rb: logic.Replacement[Bubble]) = rb match {
-      case logic.NewNode(n) => n
-      case logic.AlreadyThere(b) => b.toNode
-    }
+  trait BubbleEditing {
+    val x: Var[Int]
+    val y: Var[Int]
+    def freeze: FrozenBubbleEditing
+    def render(g: Graphics2D, hsaFocus: Boolean): BubbleRendering
+  }
+
+  trait FrozenBubbleEditing {
+    val x: Int
+    val y: Int
   }
 
   trait Edge {
-    def target: Bubble
-    def substitute(next: Bubble): Unit
-    def deleteIfReasonable() { }
+    val target: Bubble
   }
 
-  def basicEdge(_target: =>Bubble, _substitute: Bubble=>Unit) = new Edge {
-    def target = _target
-    def substitute(next: Bubble) = _substitute(next)
+  def basicEdge(_target: =>Bubble) = new Edge {
+    val target = _target
   }
+
+  trait DefaultEditing extends BubbleEditing {
+    val xInit: Int
+    val yInit: Int
+    val x = Var[Int](xInit)
+    val y = Var[Int](yInit)
+    def freeze = new DefaultFrozenEditing(x.now, y.now)
+  }
+
+  class DefaultFrozenEditing(val x: Int, val y: Int) extends FrozenBubbleEditing
 }

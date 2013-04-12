@@ -1,21 +1,23 @@
 
 package reductionengine.logic
 
-object NodeUtils {
-  def applyAll[T](t: Traversable[T]): Replacement[T] = t.toList.reverse match {
+trait NodeUtils { self: Logic with Reductions =>
+  def applyAll(t: Traversable[RNode]): RNode = t.toList.reverse match {
     case Nil =>
       NewNode(OperatorLiteral(B))
     case one :: Nil =>
-      AlreadyThere(one)
+      one
     case cdr :: car =>
-      NewNode(App(applyAll(car), AlreadyThere(cdr)))
+      NewNode(App(applyAll(car), cdr))
   }
 
-  def applyAllTo[T](to: Node[Replacement[T]], them: Traversable[T]): Node[Replacement[T]] =
-    them.toList.reverse match {
+  def applyAllTo(to: Node, them: Traversable[RNode]): Node = {
+    def iter(things: List[RNode]): Node = things match {
       case Nil =>
         to
       case cdr :: car =>
-        App(NewNode(applyAllTo(to, car)), AlreadyThere(cdr))
+        App(NewNode(iter(car)), cdr)
     }
+    iter(them.toList.reverse)
+  }
 }

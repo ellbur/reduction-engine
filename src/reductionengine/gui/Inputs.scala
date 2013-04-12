@@ -1,17 +1,128 @@
 
 package reductionengine.gui
 
-import javax.swing.{JComponent, AbstractAction, KeyStroke}
+import javax.swing._
 import java.awt.event._
-import reductionengine.{logic, sugar => s}
-import reductionengine.sugar
 
-trait Inputs { this: Editor =>
+trait Inputs { self: Editor =>
+  import sugar.logic
+  import self.{sugar => s}
+
+  sealed trait Hardness
+  case object Hard extends Hardness
+  case object Soft extends Hardness
+  case object Nada extends Hardness
+
+  sealed trait ResultingDescription
+  case object AsDescribed extends ResultingDescription
+  case object NotPerformed extends ResultingDescription
+  case class DescribedAs(description: String) extends ResultingDescription
+
+  case class Action(description: String, hardness: Hardness)(performer: => ResultingDescription) {
+    def perform() {
+      def report(as: String) {
+        hardness match {
+          case Hard => actHard(as)
+          case Soft => actSoft(as)
+          case Nada =>
+        }
+      }
+
+      performer match {
+        case NotPerformed =>
+        case AsDescribed =>
+          report(description)
+        case DescribedAs(newDescription) =>
+          report(newDescription)
+      }
+    }
+  }
+
+  case class KeyInput(
+   keyDescription: String,
+   strokes: Traversable[KeyStroke],
+   description: String,
+   action: KeyStroke => Unit)
+  {
+    def perform(stroke: KeyStroke) {
+      action(stroke)
+    }
+  }
+
+  lazy val keyInputs = {
+    import KeyEvent._
+    import InputEvent._
+
+    object ways {
+      def k(c: Char) = KeyStroke.getKeyStroke(c)
+      def k(c: Int, mods: Int) = KeyStroke.getKeyStroke(c, mods)
+
+      def i(s: KeyStroke, action: Action)
+        = KeyInput(s.toString, s::Nil, action.description, _ => action.perform())
+    }
+    import ways._
+
+    Seq(
+      i(k(VK_UP, SHIFT_DOWN_MASK), moveCurrentGroupUp),
+      i(k(VK_DOWN, SHIFT_DOWN_MASK), moveCurrentGroupDown),
+      i(k(VK_LEFT, SHIFT_DOWN_MASK), moveCurrentGroupLeft),
+      i(k(VK_RIGHT, SHIFT_DOWN_MASK), moveCurrentGroupRight),
+
+      i(k(VK_UP, 0), moveToParent),
+      i(k(VK_DOWN, 0), moveToChild),
+      i(k(VK_LEFT, 0), moveToLeftBranch),
+      i(k(VK_RIGHT, 0), moveToRightBranch),
+
+      // TODO
+      //bind(VK_TAB, 0, moveToNextHole())
+      //bind(VK_TAB, SHIFT_DOWN_MASK, moveToPreviousHole())
+
+      i(k('r'), reduceCurrentNode),
+      i(k('N'), normalizeInPlace),
+      i(k('n'), normalizeCopy),
+      i(k('D'), duplicateFully),
+
+      i(k('+'), doOperator(s.BasicOperator(logic.Plus))),
+      i(k('-'), doOperator(s.BasicOperator(logic.Minus))),
+      i(k('*'), doOperator(s.BasicOperator(logic.Times))),
+
+      i(k('S'), doOperator(s.BasicOperator(logic.S(1)))),
+      i(k('K'), doOperator(s.BasicOperator(logic.K(1, Seq(false))))),
+      i(k('I'), doOperator(s.BasicOperator(logic.I))),
+      i(k('Y'), doOperator(s.BasicOperator(logic.Y))),
+
+      i(k('.'), insertApp),
+
+      i(k('e'), stripMystery),
+      i(k('C'), clearToMystery),
+      i(k('i'), insertChild),
+
+      i(k('f'), reformatSubtree),
+
+      i(k('b'), showBuryMenu),
+      i(k('c'), showRecollectMenu),
+      i(k('v'), beginTypingVariable),
+
+      {
+        val keys = '0' to '9' map (k(_))
+        def digitOf(ks: KeyStroke) = {
+          val char = ks.getKeyChar
+          if (char.isDigit)
+            Some(char)
+          else
+            None
+        }
+        KeyInput("0..9,#", keys, "Insert number", { stroke =>
+          beginTypingNumber(digitOf(stroke))
+        })
+      }
+    )
+  }
+
   trait SetupInputs { this: JComponent =>
-    override def isFocusable = true
+    setFocusable(true)
 
     var actionCounter: Int = 0
-
     def bind(ks: KeyStroke, action: => Unit) {
       val id = "action" + actionCounter.toString
 
@@ -26,76 +137,39 @@ trait Inputs { this: Editor =>
       actionCounter += 1
     }
 
-    def bind(code: Int, modifiers: Int, action: => Unit) {
-      bind(KeyStroke.getKeyStroke(code, modifiers), action)
+    keyInputs foreach { input =>
+      input.strokes foreach { stroke =>
+        bind(stroke, input.perform(stroke))
+      }
     }
-
-    def bind(code: Char, action: => Unit) {
-      bind(KeyStroke.getKeyStroke(code), action)
-    }
-
-    // Key bindings
 
     {
-      import KeyEvent._
-      import InputEvent._
-
       var pressingGroup = Option[DraggedGroup](null)
-
-      bind(VK_UP, SHIFT_DOWN_MASK, moveCurrentGroupUp())
-      bind(VK_DOWN, SHIFT_DOWN_MASK, moveCurrentGroupDown())
-      bind(VK_LEFT, SHIFT_DOWN_MASK, moveCurrentGroupLeft())
-      bind(VK_RIGHT, SHIFT_DOWN_MASK, moveCurrentGroupRight())
-
-      bind(VK_UP, 0, moveToParent())
-      bind(VK_DOWN, 0, moveToChild())
-      bind(VK_LEFT, 0, moveToLeftBranch())
-      bind(VK_RIGHT, 0, moveToRightBranch())
-
-      bind(VK_TAB, 0, moveToNextHole())
-      bind(VK_TAB, SHIFT_DOWN_MASK, moveToPreviousHole())
-
-      bind('r', reduceCurrentNode())
-
-      bind('+', doOperator(s.BasicOperator(logic.Plus)))
-      bind('-', doOperator(s.BasicOperator(logic.Minus)))
-      bind('*', doOperator(s.BasicOperator(logic.Times)))
-
-      bind('S', doOperator(s.BasicOperator(logic.S)))
-      bind('K', doOperator(s.BasicOperator(logic.K)))
-      bind('I', doOperator(s.BasicOperator(logic.I)))
-      bind('Y', doOperator(s.BasicOperator(logic.Y)))
-
-      bind('.', doOperator(s.B))
-
-      bind('e', stripMystery())
-      bind('C', clearToMystery())
-      bind('i', insertChild())
-
-      bind('f', reformatSubtree())
-
-      for (k <- '0' to '9') bind(k, beginTypingNumber(Some(k)))
-      bind('#', beginTypingNumber(None))
 
       val mouse = new MouseListener with MouseMotionListener {
         def mouseExited(p1: MouseEvent) {}
         def mouseClicked(p1: MouseEvent) {}
         def mouseEntered(p1: MouseEvent) {}
         def mousePressed(ev: MouseEvent) {
-          // TODO: Determine if we are on a bubble.
+          requestFocus()
+
           if (ev.isControlDown) {
             makeNewRootAtPoint(ev.getX, ev.getY)
           }
+          else if (ev.isAltDown) {
+            bubbleAt(ev.getX, ev.getY) foreach { target =>
+              joinTo(target)
+            }
+          }
           else {
             val here = bubbleAt(ev.getX, ev.getY)
-            focusedBubble = here
+            jumpFocus(here)
             pressingGroup = here map { bubble =>
-              DraggedGroup(computeGroup(bubble), ev.getX, ev.getY)
+              DraggedGroup(computeGroup(bubble) flatMap (editingState.get(_).now), ev.getX, ev.getY)
             }
           }
 
           repaint()
-          updateBubblyThings()
         }
         def mouseReleased(p1: MouseEvent) {}
         def mouseDragged(ev: MouseEvent) {
@@ -112,5 +186,5 @@ trait Inputs { this: Editor =>
     }
   }
 
-  case class DraggedGroup(members: Traversable[Bubble], x: Int, y: Int)
+  case class DraggedGroup(members: Traversable[BubbleEditing], x: Int, y: Int)
 }

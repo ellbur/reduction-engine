@@ -2,21 +2,25 @@
 package reductionengine.gui
 
 import java.awt._
+import event.{ActionEvent, ActionListener}
 import scala.App
 import reductionengine.sugar
+import javax.swing.{JTextField, JComponent}
+import reactive.Observing
 
 trait Rendering { this: Editor =>
   case class RenderedBubble(bubble: Bubble, bounds: Rectangle)
   case class BubbleRendering(bounds: Rectangle, parentAttachment: Point, childAttachments: Seq[Point])
 
-  trait BasicTextBubbleRender { this: Bubble =>
+  trait BasicEditing extends DefaultEditing {
     def text: String
     def bgColor: Color
     def fgColor: Color
     def arity: Int
 
-    def render(g: Graphics2D) = {
-      val bounds = renderTextBubble(g, haveFocus, text, x, y, bgColor=bgColor, fgColor=fgColor)
+    def render(g: Graphics2D, hasFocus: Boolean): BubbleRendering = {
+      val (x, y) = (this.x.now, this.y.now)
+      val bounds = renderTextBubble(g, hasFocus, text, x, y, bgColor=bgColor, fgColor=fgColor)
       BubbleRendering(bounds, new Point(bounds.x+bounds.width/2, bounds.y), 1 to arity map {
         i =>
           new Point(
@@ -27,11 +31,20 @@ trait Rendering { this: Editor =>
     }
   }
 
-  trait ApicalOperatorRender { this: ApicalOperator =>
-    def render(g: Graphics2D) = {
+  class IntLiteralEditing(val xInit: Int, val yInit: Int, val n: Int) extends BasicEditing {
+    val text = n.toString
+    val bgColor = new Color(255, 255, 255)
+    val fgColor = new Color(20, 100, 180)
+    val arity = 0
+  }
+
+  class ApicalOperatorEditing(val xInit: Int, val yInit: Int, val op: sugar.SugarOperator) extends DefaultEditing {
+    def render(g: Graphics2D, hasFocus: Boolean) = {
+      val (x, y) = (this.x.now, this.y.now)
+
       op match {
         case sugar.B =>
-          if (haveFocus) {
+          if (hasFocus) {
             g.setColor(new Color(0, 100, 0))
             g.setStroke(new BasicStroke(3))
           }
@@ -49,7 +62,7 @@ trait Rendering { this: Editor =>
             Seq(new Point(x-4, y+4), new Point(x+4, y+4))
           )
         case other =>
-          val bounds = renderTextBubble(g, haveFocus, text, x, y, bgColor=bgColor, fgColor=fgColor)
+          val bounds = renderTextBubble(g, hasFocus, op.name, x, y, bgColor=bgColor, fgColor=fgColor)
           BubbleRendering(bounds, new Point(bounds.x+bounds.width/2, bounds.y), 1 to arity map {
             i =>
               new Point(
@@ -60,24 +73,31 @@ trait Rendering { this: Editor =>
       }
     }
 
-    def text = op.name
     val bgColor = new Color(255, 230, 200)
     val fgColor = Color.black
     val arity = op.nArgs
   }
 
-  trait IntLiteralRender extends BasicTextBubbleRender { this: IntLiteral =>
-    def text = n.toString
-    val bgColor = new Color(255, 255, 255)
-    val fgColor = new Color(20, 100, 180)
-    val arity = 0
+  class PureEditing(val xInit: Int, val yInit: Int, val idiom: sugar.Idiom) extends BasicEditing {
+    def text = idiom.toString
+    val bgColor = new Color(200, 190, 255)
+    val fgColor = new Color(20, 20, 20)
+    val arity = 1
   }
 
-  trait RootRender { this: Root =>
-    def render(g: Graphics2D) = {
+  class AntiPureEditing(val xInit: Int, val yInit: Int, val idiom: sugar.Idiom) extends BasicEditing {
+    def text = idiom.toString
+    val bgColor = new Color(200, 255, 190)
+    val fgColor = new Color(20, 20, 20)
+    val arity = 1
+  }
+
+  class RootEditing(val xInit: Int, val yInit: Int) extends DefaultEditing {
+    def render(g: Graphics2D, hasFocus: Boolean) = {
+      val (x, y) = (this.x.now, this.y.now)
       g.setColor(Color.yellow)
       g.fillRect(x-5, y-5, 5, 5)
-      if (haveFocus) {
+      if (hasFocus) {
         g.setColor(Color.red)
         g.setStroke(new BasicStroke(2))
         g.drawRect(x-5, y-5, 5, 5)
@@ -86,54 +106,122 @@ trait Rendering { this: Editor =>
     }
   }
 
-  trait NumberEditorRender { this: NumberEditor =>
-    def render(g: Graphics2D) = {
+  trait TextEditorEditing extends DefaultEditing with Observing {
+    val initialText: String
+    val arity: Int
+    def submit(text: String)
+
+    val editor = new JTextField(initialText, 6)
+    canvas.add(editor)
+    editor.setSize(editor.getPreferredSize)
+    editor.requestFocus()
+
+    editor.addActionListener(new ActionListener {
+      def actionPerformed(ev: ActionEvent) {
+        submit(editor.getText)
+      }
+    })
+
+    (x zip y) foreach {
+      case (x, y) =>
+        editor.setLocation(x - editor.getWidth/2, y - editor.getHeight/2)
+    }
+
+    editingState.visibleBubbles.toMap.change foreach { map =>
+      map map (_._2) exists(_ == this) match {
+        case false =>
+          canvas.remove(editor)
+        case true =>
+          // oK
+      }
+    }
+
+    def render(g: Graphics2D, hasFocus: Boolean) = {
       val x1 = editor.getX - 5
       val y1 = editor.getY - 5
       val width = editor.getWidth + 10
       val height = editor.getHeight + 10
 
-      g.setColor(new Color(100, 100, 100))
+      g.setColor(bgColor)
       g.fillRoundRect(x1, y1, width, height, 5, 5)
 
-      BubbleRendering(new Rectangle(x1, y1, width, height), new Point(x1+width/2, y1), Seq())
+      BubbleRendering(new Rectangle(x1, y1, width, height), new Point(x1+width/2, y1),
+        1 to arity map {
+          i =>
+            new Point(
+              (i.toDouble / (1 + arity).toDouble * width + x1).toInt,
+              y1 + height
+            )
+        }
+      )
+    }
+
+    val bgColor: Color
+  }
+
+  class NumberEditorEditing(val xInit: Int, val yInit: Int, val initialText: String) extends TextEditorEditing {
+    val bgColor = new Color(100, 100, 100)
+    val arity = 0
+
+    def submit(text: String) {
+      (try Some(text.toInt) catch { case _: NumberFormatException => None }) match {
+        case Some(n) =>
+          editingState.bubbleFor(this) foreach { bubble =>
+            replace(bubble, sugar.NewNode(sugar.IntLiteral(n)))
+            canvas.requestFocus()
+            actHard(s"Insert $text")
+          }
+        case None =>
+          message(s"$text is not a number.")
+      }
     }
   }
 
-  trait MysteryRender extends BasicTextBubbleRender { this: Mystery =>
+  class AntiPureNameEditorEditing(val xInit: Int, val yInit: Int, val idiomKind: sugar.KindOfIdiom, val initialText: String) extends TextEditorEditing {
+    val bgColor = new Color(0, 0, 100)
+    val arity = 1
+    def submit(text: String) {
+      // This is obviously really messed up.
+      editingState.bubbleFor(this) foreach {
+        case bubble: AntiPureNameEditor =>
+          val idiom = sugar.Idiom(idiomKind, text)
+          replace(bubble, sugar.NewNode(sugar.AntiPure(idiom, sugar.AlreadyThere(bubble.of))))
+          canvas.requestFocus()
+          actHard(s"Bury $idiomKind($text)")
+        case _ =>
+      }
+    }
+  }
+
+  class PureNameEditorEditing(val xInit: Int, val yInit: Int, val idiomKind: sugar.KindOfIdiom, val initialText: String) extends TextEditorEditing {
+    val bgColor = new Color(100, 0, 0)
+    val arity = 1
+    def submit(text: String) {
+      editingState.bubbleFor(this) foreach {
+        case bubble: PureNameEditor =>
+          val idiom = sugar.Idiom(idiomKind, text)
+          replace(bubble, sugar.NewNode(sugar.Pure(idiom, sugar.AlreadyThere(bubble.of))))
+          canvas.requestFocus()
+          actHard(s"Recollect $idiomKind($text)")
+        case _ =>
+      }
+    }
+  }
+
+  class MysteryEditing(val xInit: Int, val yInit: Int) extends BasicEditing {
     val text = "?"
     val bgColor = new Color(220, 220, 220)
     val fgColor = Color.black
     val arity = 0
   }
 
-  val bubbleBGColor = new Color(230, 240, 255)
   val bubbleLineColor = Color.black
   val bubbleFocusedLineColor = new Color(0, 80, 0)
-  val textColor = Color.black
 
   val bubblePad = 5
 
-  def connectLine(g: Graphics2D, from: Bubble, to: Bubble) {
-    if (from.isFocusedParent && to.hasFocus) {
-      g.setColor(new Color(100, 200, 100))
-      g.setStroke(new BasicStroke(2))
-      g.drawLine(from.x, from.y, to.x, to.y)
-    }
-    else if (to.isFocusedChild && from.hasFocus) {
-      g.setColor(new Color(150, 200, 150))
-      g.setStroke(new BasicStroke(2))
-      g.drawLine(from.x, from.y, to.x, to.y)
-    }
-    else {
-      g.setColor(new Color(0, 0, 0))
-      g.setStroke(new BasicStroke(1))
-      g.drawLine(from.x, from.y, to.x, to.y)
-    }
-  }
-
   def renderTextBubble(g: Graphics2D, focused: Boolean, text: String, x: Int, y: Int,
-                       bgColor: Color = bubbleBGColor, fgColor: Color = textColor): Rectangle =
+                       bgColor: Color, fgColor: Color): Rectangle =
   {
     val fm = g.getFontMetrics
     val pad = bubblePad

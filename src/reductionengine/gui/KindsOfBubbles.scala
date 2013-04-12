@@ -2,112 +2,131 @@
 package reductionengine.gui
 
 import java.awt.Graphics2D
-import reductionengine.{logic, sugar}
 import collection.mutable.ArrayBuffer
-import collection.mutable
 import javax.swing.JTextField
 import java.awt.event.{ActionEvent, ActionListener}
 
 trait KindsOfBubbles { this: Editor =>
+  import sugar.{ NewNode => NN, AlreadyThere => AT }
+
   class IntLiteral(
-                         var n: Int,
-                         var x: Int,
-                         var y: Int) extends Bubble with IntLiteralRender
+    val n: Int) extends Bubble
   {
-    def childEdges = Seq()
-    def toSugarNode = sugar.IntLiteral(n)
+    val childEdges = Seq()
+    lazy val toSugarNode = sugar.IntLiteral(n)
+    override def toString = n.toString
+    def withChildren(children: Seq[Bubble]) = this
+    def edit(x: Int, y: Int) = new IntLiteralEditing(x, y, n)
   }
   object IntLiteral {
-    def apply(n: Int, x: Int, y: Int) = new IntLiteral(n, x, y)
+    def apply(n: Int) = new IntLiteral(n)
   }
 
-  class ApicalOperator(var op: sugar.SugarOperator, var childBubbles: mutable.ArrayBuffer[Bubble], var x: Int, var y: Int)
-    extends Bubble with ApicalOperatorRender
+  class ApicalOperator(val op: sugar.SugarOperator, val childBubbles: Seq[Bubble])
+    extends Bubble
   { thisBubble =>
-    def childEdges = childBubbles.indices map { i =>
-      new Edge {
-        def target = childBubbles(i)
-        def substitute(`with`: Bubble) { childBubbles(i) = `with` }
-        override def deleteIfReasonable() {
-          if (i == childBubbles.length-1) {
-            childBubbles.remove(i)
-            if (childBubbles.length == 0) {
-              focusedBubble = Some(thisBubble)
-              focusedParent = identifyAParent(thisBubble)
-              focusedChild = identifyAChild(thisBubble)
-            }
-            else {
-              focusedBubble = Some(childBubbles(i - 1))
-              focusedParent = Some(thisBubble)
-              focusedChild = identifyAChild(childBubbles(i - 1))
-            }
-          }
-          else {
-            // TODO
-            message("Deleting inner parameters is not implemented.")
-          }
-        }
-      }
-    }
-    def toSugarNode = sugar.ApicalOperator(op, childBubbles.toSeq)
+    lazy val childEdges = childBubbles map (basicEdge(_))
+    lazy val toSugarNode = sugar.ApicalOperator(op, (childBubbles map (sugar.AlreadyThere(_))).toSeq)
+    def withChildren(children: Seq[Bubble]) = new ApicalOperator(op, children)
+    override def toString = s"$op(${childBubbles map (_.toString) mkString ","})"
+    def edit(x: Int, y: Int) = new ApicalOperatorEditing(x, y, op)
   }
   object ApicalOperator {
-    def apply(op: sugar.SugarOperator, childBubbles: Seq[Bubble], x: Int, y: Int) =
-      new ApicalOperator(op, mutable.ArrayBuffer(childBubbles: _*), x, y)
+    def apply(op: sugar.SugarOperator, children: Seq[Bubble]) = new ApicalOperator(op, children)
   }
 
-  class Root(var is: Bubble, var x: Int, var y: Int) extends Bubble with RootRender
+  class Pure(val idiom: sugar.Idiom, val is: Bubble) extends Bubble {
+    lazy val childEdges = Seq(basicEdge(is))
+    lazy val toSugarNode = sugar.Pure(idiom, sugar.AlreadyThere(is))
+    def withChildren(children: Seq[Bubble]) = children match {
+      case Seq(child) => new Pure(idiom, child)
+    }
+    def edit(x: Int, y: Int) = new PureEditing(x, y, idiom)
+  }
+  object Pure {
+    def apply(idiom: sugar.Idiom, is: Bubble) = new Pure(idiom, is)
+  }
+
+  class AntiPure(val idiom: sugar.Idiom, val is: Bubble) extends Bubble {
+    lazy val childEdges = Seq(basicEdge(is))
+    lazy val toSugarNode = sugar.AntiPure(idiom, sugar.AlreadyThere(is))
+    def withChildren(children: Seq[Bubble]) = children match {
+      case Seq(child) => new AntiPure(idiom, child)
+    }
+    def edit(x: Int, y: Int) = new AntiPureEditing(x, y, idiom)
+  }
+  object AntiPure {
+    def apply(idiom: sugar.Idiom, is: Bubble) = new AntiPure(idiom, is)
+  }
+
+  class Root(val is: Bubble) extends Bubble
   {
-    def childEdges = Seq(basicEdge(is, is = _))
-    def toSugarNode = sugar.Root(is)
+    lazy val childEdges = Seq(basicEdge(is))
+    lazy val toSugarNode = sugar.Root(sugar.AlreadyThere(is))
+    def withChildren(children: Seq[Bubble]) = children match {
+      case Seq(child) => new Root(child)
+    }
+    override def toString = s"*$is"
+    def edit(x: Int, y: Int) = new RootEditing(x, y)
   }
   object Root {
-    def apply(is: Bubble, x: Int, y: Int) = new Root(is, x, y)
+    def apply(is: Bubble) = new Root(is)
   }
 
-  class Mystery(var n: Int, var x: Int, var y: Int) extends Bubble with MysteryRender
+  class Mystery(val n: Int) extends Bubble
   {
-    def childEdges = Seq()
-    def toSugarNode = sugar.Mystery(n)
+    lazy val childEdges = Seq()
+    lazy val toSugarNode = sugar.Mystery(n)
+    def withChildren(children: Seq[Bubble]) = this
+    override def toString = s"?$n"
+    def edit(x: Int, y: Int) = new MysteryEditing(x, y)
   }
   object Mystery {
-    def apply(n: Int, x: Int, y: Int) = new Mystery(n, x, y)
+    def apply(n: Int) = new Mystery(n)
   }
 
-  class NumberEditor(id: Int, initially: String, var x: Int, var y: Int) extends Bubble with NumberEditorRender { thisBubble =>
-    val editor = new JTextField(initially, 6)
-
-    override val components = Seq(editor)
-
-    def go() {
-      editor.setLocation(x + 5, y + 5)
-      editor.setSize(editor.getPreferredSize)
-    }
-    go()
-    override def move(dx: Int, dy: Int) {
-      x += dx
-      y += dy
-      go()
-    }
-
-    override def receiveFocus() { editor.requestFocus() }
-
-    editor.addActionListener(new ActionListener {
-      def actionPerformed(p1: ActionEvent) {
-        try {
-          replace(thisBubble, sugar.NewNode(sugar.Focused(sugar.IntLiteral(editor.getText.toInt))))
-        }
-        catch {
-          case _: NumberFormatException =>
-            message("Not a number: " + editor.getText)
-        }
-      }
-    })
-
-    def childEdges = Seq()
-    def toSugarNode = sugar.NumberEditor(id, editor.getText)
+  class NumberEditor(id: Int, val initially: String)
+    extends Bubble
+  {
+    val childEdges = Seq()
+    def withChildren(children: Seq[Bubble]) = this
+    lazy val toSugarNode = sugar.NumberEditor(id, "")
+    def edit(x: Int, y: Int) = new NumberEditorEditing(x, y, initially)
   }
   object NumberEditor {
-    def apply(id: Int, initially: String, x: Int, y: Int) = new NumberEditor(id, initially, x, y)
+    def apply(id: Int, initially: String) = new NumberEditor(id, initially)
+  }
+
+  class AntiPureNameEditor(val idiomKind: sugar.KindOfIdiom, val initially: String, val of: Bubble)
+    extends Bubble
+  {
+    lazy val childEdges = Seq(basicEdge(of))
+    def withChildren(children: Seq[Bubble]) = children match {
+      case Seq(child) => new AntiPureNameEditor(idiomKind, initially, child)
+    }
+    lazy val toSugarNode = sugar.AntiPureNameEditor(idiomKind, "", AT(of))
+
+    def edit(x: Int, y: Int) = new AntiPureNameEditorEditing(x, y, idiomKind, initially)
+  }
+  object AntiPureNameEditor {
+    def apply(idiomKind: sugar.KindOfIdiom, initially: String, of: Bubble) =
+      new AntiPureNameEditor(idiomKind, initially, of)
+  }
+
+  class PureNameEditor(val idiomKind: sugar.KindOfIdiom, val initially: String, val of: Bubble)
+    extends Bubble
+  {
+    lazy val initialText = initially
+    lazy val childEdges = Seq(basicEdge(of))
+    def withChildren(children: Seq[Bubble]) = children match {
+      case Seq(child) => new PureNameEditor(idiomKind, initially, child)
+    }
+    lazy val toSugarNode = sugar.PureNameEditor(idiomKind, "", AT(of))
+
+    def edit(x: Int, y: Int) = new PureNameEditorEditing(x, y, idiomKind, initially)
+  }
+  object PureNameEditor {
+    def apply(idiomKind: sugar.KindOfIdiom, initially: String, of: Bubble) =
+      new PureNameEditor(idiomKind, initially, of)
   }
 }

@@ -1,4 +1,9 @@
+*
+!*/
+!*.scala
+!*.sbt
+!*.iml
+!.gitignore
+!*.xml
 target
-out
-project
-lib
+
