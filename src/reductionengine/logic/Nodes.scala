@@ -4,13 +4,27 @@ package reductionengine.logic
 trait Nodes { this: Reductions =>
   // Agda parameterized module style.
   type IdiomType
-  type NodeType
+  type NodeType <: NodeLike
 
   type RNode = Replacement
 
   sealed trait Node {
     def isPureIn(idiom: Idiom): Boolean
+    def isNotImpureIn(idiom: Idiom): Boolean
     def deepString: String
+    /**
+     * Assuming no reductions were possible here.
+     * None indicates already normalized.
+     */
+    lazy val normalized: Option[RNode] =
+      StandardReductions.find(NewNode(this)) match {
+        case Some(ReductionPossibility(_, remapping)) =>
+          Some(remapping.normalized getOrElse remapping)
+        case None =>
+          normalizedNoReductions
+      }
+    val normalizedNoReductions: Option[RNode]
+    lazy val normalizedOrSame = normalized getOrElse (NewNode(this))
   }
 
   case class Idiom(rep: IdiomType, pure: RNode, app: RNode) {
@@ -18,34 +32,81 @@ trait Nodes { this: Reductions =>
   }
 
   case class App(car: RNode, cdr: RNode) extends Node {
-    def isPureIn(idiom: Idiom) = toNode(car).isPureIn(idiom) && toNode(cdr).isPureIn(idiom)
+    def isPureIn(idiom: Idiom) = car.toNode.isPureIn(idiom) && cdr.toNode.isPureIn(idiom)
+    def isNotImpureIn(idiom: Idiom) = car.toNode.isNotImpureIn(idiom) && cdr.toNode.isNotImpureIn(idiom)
     override def toString = s"$car($cdr)"
     def deepString = s"${car.deepString}(${cdr.deepString})"
+    lazy val normalizedNoReductions =
+      car.normalized match {
+        case Some(better) =>
+          Some(App(better, cdr).normalizedOrSame)
+        case None =>
+          cdr.normalized match {
+            case Some(better) =>
+              Some(App(car, better).normalizedOrSame)
+            case None =>
+              None
+          }
+      }
   }
   case class Pure(of: Idiom, is: RNode) extends Node {
-    def isPureIn(idiom: Idiom) = false // TODO
+    def isPureIn(idiom: Idiom) =
+      if (idiom == of)
+        true
+      else
+        is.toNode.isPureIn(idiom)
+    def isNotImpureIn(idiom: Idiom) =
+      if (idiom == of)
+        true
+      else
+        is.toNode.isNotImpureIn(idiom)
     def deepString = s"Pure(${of.toString}, ${is.deepString})"
+    lazy val normalizedNoReductions =
+      is.normalized match {
+        case None => None
+        case Some(better) => Some(Pure(of, better).normalizedOrSame)
+      }
   }
   case class AntiPure(of: Idiom, is: RNode) extends Node {
-    def isPureIn(idiom: Idiom) = false // TODO
+    def isPureIn(idiom: Idiom) =
+      if (idiom == of)
+        false
+      else
+        is.toNode.isPureIn(idiom)
+    def isNotImpureIn(idiom: Idiom) =
+      if (idiom == of)
+        false
+      else
+        is.toNode.isNotImpureIn(idiom)
     def deepString = s"AntiPure(${of.toString}, ${is.deepString})"
+    lazy val normalizedNoReductions =
+      is.normalized match {
+        case None => None
+        case Some(better) => Some(AntiPure(of, better).normalizedOrSame)
+      }
   }
 
   case class IntLiteral(n: Int) extends Node {
     def isPureIn(idiom: Idiom) = true
+    def isNotImpureIn(idiom: Idiom) = true
     override def toString = n.toString
     def deepString = n.toString
+    lazy val normalizedNoReductions = None
   }
 
   case class Mystery(id: Int) extends Node {
     def isPureIn(idiom: Idiom) = false
+    def isNotImpureIn(idiom: Idiom) = true
     override def toString = "?"
     def deepString = "?"
+    lazy val normalizedNoReductions = None
   }
 
   case class OperatorLiteral(operator: Operator) extends Node {
     def isPureIn(idiom: Idiom) = true
+    def isNotImpureIn(idiom: Idiom) = true
     def deepString = operator.toString
+    lazy val normalizedNoReductions = None
   }
 
   import NameUtils._

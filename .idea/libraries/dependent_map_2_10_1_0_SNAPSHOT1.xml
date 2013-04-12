@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="dependent-map_2.10-1.0-SNAPSHOT1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/main-lib/dependent-map_2.10-1.0-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

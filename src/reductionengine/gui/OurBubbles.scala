@@ -3,106 +3,125 @@ package reductionengine.gui
 
 import collection.mutable.ArrayBuffer
 import javax.swing.SwingWorker
-import reactive.Var
+import reactive.{EventStream, Signal, EventSource, Var}
+import java.awt.Point
+import ellbur.collection.reactivemap.clobber._
+import ellbur.dependenttypes._
+import scalaz._
+import Scalaz._
+import signalutils._
+import languageFeature.postfixOps
+import com.github.ellbur.collection.dependentmap.immutable.DependentMap
 
 trait OurBubbles { this: Editor =>
   import sugar.logic.ReductionPossibility
-  import sugar.{NewNode => NN, AlreadyThere => AT}
   import sugar.logic
 
-  val roots = ArrayBuffer[Bubble]()
-  val bubbles = ArrayBuffer[Bubble]()
+  case class EditedBubble(bubble: Bubble, editing: BubbleEditing)
 
-  val focusedBubble = Var[Option[Bubble]](None)
-  val focusedChild = Var[Option[Bubble]](None)
-  val focusedParent = Var[Option[Bubble]](None)
+  object editingState {
+    lazy val visibleBubbles = new ClobberFRMapID[Bubble, BubbleEditing](addOrRemoveBubbles)
+    lazy val focusedBubble = Var[Option[EditedBubble]](None)
+    lazy val focusedParent = Var[Option[Bubble]](None)
+    lazy val focusedChild = Var[Option[Bubble]](None)
 
+    val addOrRemoveBubbles = new EventSource[Map[Bubble,BubbleEditing]]
+
+    def get(b: Bubble): Signal[Option[BubbleEditing]] = visibleBubbles.get(b)
+
+    def getEdited(b: Bubble): Signal[Option[EditedBubble]] = get(b) map (_ map { e =>
+      EditedBubble(b, e)
+    })
+
+    lazy val freeze: Signal[FrozenEditingState] = visibleBubbles.toMap map {
+      visibleBubbles =>
+        FrozenEditingState(
+          visibleBubbles.toList map { case (bubble, editing) =>
+            FrozenEditedBubble(bubble, editing.freeze)
+          }
+        )
+    }
+
+    // TODO: This really shouldn't exist.
+    def bubbleFor(editing: BubbleEditing): Option[Bubble] =
+      visibleBubbles.toMap.now.toTraversable.find(_._2 == editing) map (_._1)
+  }
+  import editingState.focusedBubble
+
+  case class FrozenEditedBubble(bubble: Bubble, editing: FrozenBubbleEditing)
+  case class FrozenEditingState(bubbles: Seq[FrozenEditedBubble]) {
+    def goTo() {
+      println(s"Going to ${bubbles map (_.bubble)}")
+
+      editingState.addOrRemoveBubbles.fire((bubbles map { edited =>
+        (edited.bubble, edited.bubble.edit(edited.editing.x, edited.editing.y))
+      }).toMap)
+
+      jumpFocus(None)
+    }
+  }
+
+  val history = ArrayBuffer[FrozenEditingState]()
+
+  import sugar.{NewNode => NN}
   val K = NN(sugar.ApicalOperator(sugar.BasicOperator(logic.K(1, Seq(false))), Seq()))
   val S = NN(sugar.ApicalOperator(sugar.BasicOperator(logic.S(1)), Seq()))
   val standardIdiomKinds = Seq(
     sugar.KindOfIdiom("Var", K, S)
   )
 
-  val buryChoices = Var[Option[(Bubble, Seq[sugar.KindOfIdiom])]](None)
-  def updateBuryChoices() {
-    focusedBubble.now foreach { here =>
-      buryChoices() = Some((here, standardIdiomKinds))
-    }
-  }
-  def clearBuryChoices() { buryChoices() = None }
+  val wantsToBury = new EventSource[Unit]()
+  val wantsToRecollect = new EventSource[Unit]()
 
-  val recollectChoices = Var[Option[(Bubble, Seq[sugar.KindOfIdiom])]](None)
-  def updateRecollectChoices() {
-    focusedBubble.now foreach { here =>
-      recollectChoices() = Some((here, standardIdiomKinds))
-    }
-  }
-  def clearRecollectChoices() { recollectChoices() = None }
+  sealed trait DoOrClear
+  case object Do extends DoOrClear
+  case object Clear extends DoOrClear
 
-  focusedBubble.change foreach { now =>
-    clearBuryChoices()
-    clearRecollectChoices()
-  }
+  val buryChoices: Signal[Option[(Bubble, Seq[sugar.KindOfIdiom])]] =
+    (((wantsToBury map (_ => Do)) | (focusedBubble.change map (_ => Clear))) map {
+      case Clear => None
+      case Do => focusedBubble.now map { here =>
+        (here.bubble, standardIdiomKinds)
+      }
+    }).hold(None)
 
-  def setFocus(b: Bubble) {
-    focusedBubble() = Some(b)
-    focusedChild() = identifyAChild(b)
-    focusedParent() = identifyAParent(b)
-    b.receiveFocus()
-  }
-
-  def updateBubblyThings() {
-    updateFocusedReductions()
-  }
+  val recollectChoices: Signal[Option[(Bubble, Seq[sugar.KindOfIdiom])]] =
+    (((wantsToRecollect map (_ => Do)) | (focusedBubble.change map (_ => Clear))) map {
+      case Clear => None
+      case Do => focusedBubble.now map { here =>
+        (here.bubble, standardIdiomKinds)
+      }
+    }).hold(None)
 
   type RPB = ReductionPossibility
 
-  val focusedReductions = Var[Option[(Bubble, Seq[RPB])]](None)
-  def updateFocusedReductions() {
-    println(1)
-    focusedReductions() = None
-    val worker = new SwingWorker[Option[(Bubble, Seq[RPB])],Any] {
-      def doInBackground = {
-        println(2)
-        focusedBubble.now map { bubble =>
-          (bubble, findReductionPossibilities(bubble))
-        }
-      }
-
-      override def done() {
-        val were = get()
-        focusedReductions() = were
-      }
-    }
-    worker.execute()
+  focusedBubble.change foreach { editedBubble =>
+    updateFocusedReductions(editedBubble)
   }
 
-  /**
-   * Move some bubbles around in (x, y) in order
-   */
-  def reposition(toMoveP: Seq[Bubble]) {
-    import graphutils.{GraphLayout4 => GL}
+  case class FocusedReductions(where: Bubble, reductions: Seq[ReductionPossibility])
 
-    val moved = toMoveP.toSet
+  val focusedReductions = Var[Option[FocusedReductions]](None)
+  def updateFocusedReductions(editingBubble: Option[EditedBubble]) {
+    focusedReductions() = None
 
-    val bubbleToK = bubbles.zipWithIndex.toMap
+    editingBubble foreach { editingBubble =>
+      import editingBubble.bubble
 
-    case class Datum(x: Double, y: Double, adj: Seq[Int], dist: Boolean)
-    val data = bubbles map { b =>
-      Datum(b.x, b.y, (b.children map (bubbleToK(_))).toSeq, moved contains b)
-    }
+      val worker = new SwingWorker[Option[FocusedReductions], Any] {
+        def doInBackground() = {
+          Some(FocusedReductions(
+            bubble,
+            findReductionPossibilities(bubble)
+          ))
+        }
 
-    val scale = 40.0
-    val origPosition = data map (d => (d.x, d.y))
-    val adjacency = data map (_.adj)
-    val disturbed = data map (_.dist)
-
-    val newPos = GL.computeLayout(scale=scale, origPosition=origPosition,
-      adjacency=adjacency, disturbed=disturbed)
-
-    newPos zip bubbles foreach {
-      case ((x, y), b) =>
-        b.move((x - b.x).toInt, (y - b.y).toInt)
+        override def done() {
+          val were = get()
+          focusedReductions() = were
+        }
+      }
+      worker.execute()
     }
   }
 }

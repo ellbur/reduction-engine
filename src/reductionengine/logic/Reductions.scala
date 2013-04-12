@@ -2,73 +2,70 @@
 package reductionengine.logic
 
 trait Reductions { self: Nodes =>
-  val nodeLike: NodeLike
-
   case class ReductionPossibility(name: String, remapping: RNode)
 
-  sealed trait Replacement { def deepString: String }
+  sealed trait Replacement {
+    def deepString: String
+    val toNode: Node
+    lazy val normalized: Option[RNode] = toNode.normalized
+  }
   case class AlreadyThere(is: NodeType) extends Replacement {
     override def toString = "*"
     def deepString = is.toString
+    lazy val toNode = is.toNode
   }
   case class NewNode(is: Node) extends Replacement {
     override def toString = is.toString
     def deepString = is.deepString
+    lazy val toNode = is
   }
 
   trait NodeLike {
-    def toNode(t: NodeType): Node
-  }
-  def toNode(x: RNode) = x match {
-    case AlreadyThere(it) => nodeLike.toNode(it)
-    case NewNode(it) => it
+    val toNode: Node
   }
 
   import self.{NewNode => NN}
 
   object AppLike {
-    def unapply(x: RNode): Option[(RNode, RNode)] = toNode(x) match {
+    def unapply(x: RNode): Option[(RNode, RNode)] = x.toNode match {
       case App(car, cdr) => Some((car, cdr))
       case _             => None
     }
   }
 
   object IntLiteralLike {
-    def unapply(x: RNode) = toNode(x) match {
+    def unapply(x: RNode) = x.toNode match {
       case IntLiteral(n) => Some(n)
       case _ => None
     }
   }
 
   object OperatorLiteralLike {
-    def unapply(x: RNode) = toNode(x) match {
+    def unapply(x: RNode) = x.toNode match {
       case OperatorLiteral(op) => Some(op)
       case _ => None
     }
   }
 
   object MysteryLike {
-    def unapply(x: RNode) = toNode(x) match {
+    def unapply(x: RNode) = x.toNode match {
       case Mystery(n) => Some(Mystery(n))
       case _ => None
     }
   }
 
   object PureLike {
-    def unapply(x: RNode) = toNode(x) match {
+    def unapply(x: RNode) = x.toNode match {
       case Pure(idiom, n) => Some((idiom, n))
       case _ => None
     }
   }
 
   object AntiPureLike {
-    def unapply(x: RNode) = toNode(x) match {
+    def unapply(x: RNode) = x.toNode match {
       case AntiPure(idiom, n) => Some((idiom, n))
       case _ => None
     }
-  }
-
-  trait BuildWithNodes {
   }
 
   object StandardReductions {
@@ -76,7 +73,7 @@ trait Reductions { self: Nodes =>
       import self.{NewNode => NN, AlreadyThere => AT}
 
       x match {
-        case PureLike(idiom, expr) if toNode(expr).isPureIn(idiom) =>
+        case PureLike(idiom, expr) if expr.toNode.isPureIn(idiom) =>
           Some(ReductionPossibility(
             "Constify",
             NN(App(idiom.pure, expr))
@@ -147,5 +144,9 @@ trait Reductions { self: Nodes =>
         case _ => None
       }
     }
+  }
+
+  def normalize(x: RNode): Option[RNode] = {
+    x.normalized
   }
 }

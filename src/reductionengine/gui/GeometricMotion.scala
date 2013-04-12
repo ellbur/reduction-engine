@@ -1,24 +1,56 @@
 
 package reductionengine.gui
 
+import java.awt.Point
+
 trait GeometricMotion { this: Editor =>
-  def moveCurrentGroupUp() {
-    currentGroup foreach (_ foreach (_ move (0, -10)))
+  def moveCurrentGroup(dx: Int, dy: Int): Boolean = {
+    currentGroup match {
+      case Some(group) =>
+        group foreach { bubble =>
+          editingState.get(bubble).now foreach { editing =>
+            editing.x() = editing.x.now + dx
+            editing.y() = editing.y.now + dy
+          }
+        }
+        true
+      case None =>
+        false
+    }
   }
 
-  def moveCurrentGroupDown() {
-    currentGroup foreach (_ foreach (_ move (0, 10)))
+  val moveCurrentGroupUp = Action("Slide subtree up", Soft) {
+    if (moveCurrentGroup(0, -10))
+      AsDescribed
+    else
+      NotPerformed
   }
 
-  def moveCurrentGroupLeft() {
-    currentGroup foreach (_ foreach (_ move (-10, 0)))
+  val moveCurrentGroupDown = Action("Slide subtree down", Soft) {
+    if (moveCurrentGroup(0, +10))
+      AsDescribed
+    else
+      NotPerformed
   }
 
-  def moveCurrentGroupRight() {
-    currentGroup foreach (_ foreach (_ move (10, 0)))
+  val moveCurrentGroupLeft = Action("Slide subtree left", Soft) {
+    if (moveCurrentGroup(-10, 0))
+      AsDescribed
+    else
+      NotPerformed
   }
 
-  def moveGroup(group: Traversable[Bubble], dx: Int, dy: Int) {
-    group foreach { _.move(dx, dy) }
+  val moveCurrentGroupRight = Action("Slide subtree right", Soft) {
+    if (moveCurrentGroup(+10, 0))
+      AsDescribed
+    else
+      NotPerformed
+  }
+
+  def moveGroup(group: Traversable[BubbleEditing], dx: Int, dy: Int) {
+    group foreach { editing =>
+      editing.x() = editing.x.now + dx
+      editing.y() = editing.y.now + dy
+    }
   }
 }

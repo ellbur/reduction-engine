@@ -17,6 +17,8 @@ trait FocusAndGroups { this: Editor =>
     group
   }
 
+  import editingState.focusedBubble
+
   def currentGroup: Option[Traversable[Bubble]] =
-    focusedBubble.now map (computeGroup(_))
+    focusedBubble.now map (eb => computeGroup(eb.bubble))
 }

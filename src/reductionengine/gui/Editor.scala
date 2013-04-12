@@ -20,5 +20,6 @@ class Editor extends JPanel
   with Rendering
   with Inputs
   with SomeExperiments
+  with UndoRedo
 
 
