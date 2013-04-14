@@ -17,10 +17,11 @@ trait Rendering { this: Editor =>
     def bgColor: Color
     def fgColor: Color
     def arity: Int
+    def round: Boolean = false
 
     def render(g: Graphics2D, hasFocus: Boolean): BubbleRendering = {
       val (x, y) = (this.x.now, this.y.now)
-      val bounds = renderTextBubble(g, hasFocus, text, x, y, bgColor=bgColor, fgColor=fgColor)
+      val bounds = renderTextBubble(g, hasFocus, text, x, y, bgColor=bgColor, fgColor=fgColor, round=round)
       BubbleRendering(bounds, new Point(bounds.x+bounds.width/2, bounds.y), 1 to arity map {
         i =>
           new Point(
@@ -62,7 +63,7 @@ trait Rendering { this: Editor =>
             Seq(new Point(x-4, y+4), new Point(x+4, y+4))
           )
         case other =>
-          val bounds = renderTextBubble(g, hasFocus, op.name, x, y, bgColor=bgColor, fgColor=fgColor)
+          val bounds = renderTextBubble(g, hasFocus, op.name, x, y, bgColor=bgColor, fgColor=fgColor, round=false)
           BubbleRendering(bounds, new Point(bounds.x+bounds.width/2, bounds.y), 1 to arity map {
             i =>
               new Point(
@@ -208,6 +209,28 @@ trait Rendering { this: Editor =>
     }
   }
 
+  class VariableEditorEditing(val xInit: Int, val yInit: Int, val initialText: String) extends TextEditorEditing {
+    val bgColor = new Color(200, 200, 255)
+    val arity = 0
+    def submit(text: String) {
+      editingState.bubbleFor(this) foreach {
+        case bubble: VariableEditor =>
+          replace(bubble, sugar.NewNode(sugar.Variable(text)))
+          canvas.requestFocus()
+          actHard(s"Insert variable $text")
+        case _ =>
+      }
+    }
+  }
+
+  class VariableEditing(val xInit: Int, val yInit: Int, name: String) extends BasicEditing {
+    val text = name
+    val bgColor = new Color(200, 200, 255)
+    val fgColor = new Color(0, 0, 0)
+    val arity = 0
+    override val round = true
+  }
+
   class MysteryEditing(val xInit: Int, val yInit: Int) extends BasicEditing {
     val text = "?"
     val bgColor = new Color(220, 220, 220)
@@ -221,7 +244,7 @@ trait Rendering { this: Editor =>
   val bubblePad = 5
 
   def renderTextBubble(g: Graphics2D, focused: Boolean, text: String, x: Int, y: Int,
-                       bgColor: Color, fgColor: Color): Rectangle =
+                       bgColor: Color, fgColor: Color, round: Boolean): Rectangle =
   {
     val fm = g.getFontMetrics
     val pad = bubblePad
@@ -235,18 +258,23 @@ trait Rendering { this: Editor =>
     val y2 = y + height/2 + pad
 
     g.setColor(bgColor)
-    g.fillRoundRect(x1, y1, x2-x1, y2-y1, 5, 5)
+    if (round)
+      g.fillOval(x1, y1, x2-x1, y2-y1)
+    else
+      g.fillRoundRect(x1, y1, x2-x1, y2-y1, 5, 5)
 
     if (focused) {
       g.setColor(bubbleFocusedLineColor)
       g.setStroke(new BasicStroke(2))
-      g.drawRoundRect(x1, y1, x2-x1, y2-y1, 5, 5)
     }
     else {
       g.setColor(bubbleLineColor)
       g.setStroke(new BasicStroke(1))
-      g.drawRoundRect(x1, y1, x2-x1, y2-y1, 5, 5)
     }
+    if (round)
+      g.drawOval(x1, y1, x2-x1, y2-y1)
+    else
+      g.drawRoundRect(x1, y1, x2-x1, y2-y1, 5, 5)
 
     g.setColor(fgColor)
     g.drawString(text, x-width/2, y+height/2)

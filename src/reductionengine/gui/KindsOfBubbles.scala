@@ -129,4 +129,24 @@ trait KindsOfBubbles { this: Editor =>
     def apply(idiomKind: sugar.KindOfIdiom, initially: String, of: Bubble) =
       new PureNameEditor(idiomKind, initially, of)
   }
+
+  class VariableEditor(val id: Int, initially: String) extends Bubble {
+    lazy val childEdges = Seq()
+    def withChildren(children: Seq[Bubble]) = this
+    lazy val toSugarNode = sugar.VariableEditor(id, initially)
+    def edit(x: Int, y: Int) = new VariableEditorEditing(x, y, initially)
+  }
+  object VariableEditor {
+    def apply(id: Int, initially: String) = new VariableEditor(id, initially)
+  }
+
+  class Variable(name: String) extends Bubble {
+    lazy val childEdges = Seq()
+    def withChildren(children: Seq[Bubble]) = this
+    lazy val toSugarNode = sugar.Variable(name)
+    def edit(x: Int, y: Int) = new VariableEditing(x, y, name)
+  }
+  object Variable {
+    def apply(name: String) = new Variable(name)
+  }
 }

@@ -76,6 +76,8 @@ trait Reductions { self: Editor =>
       case s.PureNameEditor(idiomKind, progress, of) =>
         val (of_, f) = handle(of)
         (PureNameEditor(idiomKind, progress, of_), f)
+      case s.VariableEditor(id, s) => (VariableEditor(id, s), None)
+      case s.Variable(name) => (Variable(name), None)
       case s.Focused(is) =>
         val (became, _) = handle(is)
         (became, Some(became))

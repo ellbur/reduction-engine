@@ -12,11 +12,17 @@ trait Idioms { self: SugarNodes =>
     def toLogic = logic.Idiom(this, kind.pure.toNode, kind.app.toNode)
   }
 
-  object standardIdiomKinds {
+  object standardCombinators {
     import self.{NewNode => NN}
 
     val K = NN(ApicalOperator(BasicOperator(logic.K(1, Seq(false))), Seq()))
     val S = NN(ApicalOperator(BasicOperator(logic.S(1)), Seq()))
+    val I = NN(ApicalOperator(BasicOperator(logic.I), Seq()))
+  }
+
+  object standardIdiomKinds {
+    import self.{NewNode => NN}
+    import standardCombinators._
 
     val lambda = KindOfIdiom("Var", K, S)
   }

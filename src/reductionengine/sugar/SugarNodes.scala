@@ -171,6 +171,21 @@ trait SugarNodes { self: Idioms =>
     def withChildren(children: Seq[RNode]) = children match { case Seq(c) => copy(of=c) }
   }
 
+  case class VariableEditor(id: Int, progress: String) extends SugarNode {
+    lazy val toNode = logic.Mystery(id)
+    lazy val children = Seq()
+    def withChildren(children: Seq[RNode]) = this
+  }
+
+  case class Variable(name: String) extends SugarNode {
+    lazy val toNode = logic.AntiPure(
+      Idiom(standardIdiomKinds.lambda, name).toLogic,
+      standardCombinators.I.toNode
+    )
+    lazy val children = Seq()
+    def withChildren(children: Seq[RNode]) = this
+  }
+
   case class Focused(is: RNode) extends SugarNode {
     lazy val toNode = is match {
       case AlreadyThere(it) => it.toNode

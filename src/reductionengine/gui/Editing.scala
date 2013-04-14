@@ -109,17 +109,12 @@ trait Editing { self: Editor =>
   }
 
   val beginTypingVariable = Action("Insert variable", Nada) {
-    /*
     fillAHole(_ =>
       NN(sugar.VariableEditor(nextMysteryCounter, ""))
     ) match {
       case true => AsDescribed
       case false => NotPerformed
     }
-    */
-    // TODO
-    message("Not implemented.")
-    NotPerformed
   }
 
   val stripMystery = Action("Partially apply", Hard) {
