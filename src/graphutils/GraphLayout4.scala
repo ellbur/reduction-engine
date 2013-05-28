@@ -5,12 +5,12 @@ object GraphLayout4 {
   case class Node(origPosition: Option[(Double, Double)], disturb: Boolean, adjacency: Seq[Int])
 
   def computeLayout(
-       scale: Double,
+       hScale: Double,
+       vScale: Double,
        center: (Double, Double),
        initial: IndexedSeq[Node]):
     IndexedSeq[(Double,Double)] =
   {
-    println(initial)
     val N = initial.length
 
     // Step 1: Topological sort!
@@ -59,7 +59,6 @@ object GraphLayout4 {
 
       val (nx, ny) = {
         if (parents.length == 0) {
-          println(s"Applying orig position to $k")
           initially.origPosition match {
             case Some((origX, origY)) =>
               (origX, origY)
@@ -70,11 +69,11 @@ object GraphLayout4 {
         else {
           def totallyNew = {
             val xDs = parents map { p =>
-              p.x + p.childOffset * scale
+              p.x + p.childOffset * hScale
             }
             val yDs = parents map { p => p.y }
 
-            (xDs.sum / xDs.length, yDs.max + scale*parents.length)
+            (xDs.sum / xDs.length, yDs.max + vScale*parents.length)
           }
 
           initially.origPosition match {

@@ -6,6 +6,7 @@ import reductionengine._
 
 class Editor extends JPanel
   with reactive.Observing
+  with redosignals.Observing
   with Bubbles
   with KindsOfBubbles
   with OurBubbles

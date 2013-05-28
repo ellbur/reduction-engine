@@ -1,57 +1,71 @@
 
 package reductionengine.gui
 
-import java.awt.{Point, Component, Graphics2D}
-import reactive.Var
+import java.awt.{Rectangle, Component, Graphics2D}
+import reactive.{EventStream, Signal, Var}
+import scalaz._
+import Scalaz._
+import signalutils._
+import javax.swing.JComponent
+import redosignals._
+import RedoSignals._
 
 trait Bubbles { this: Editor =>
   object sugar extends reductionengine.sugar.Sugar {
     type NodeType = Bubble
+    type M[+X] = Target[X]
+    def now[A](x: M[A]) = x.now
+    val monad = implicitly[Monad[Target]]
   }
   import sugar.SugarNode
   import sugar.logic
 
-  trait Bubble extends logic.NodeLike with sugar.SugarNodeLike {
-    lazy val children: Seq[Bubble] = childEdges map (_.target)
-    val childEdges: Seq[Edge]
-
-    def withChildren(children: Seq[Bubble]): Bubble
-    def transformChildren(f: Seq[Bubble] => Seq[Bubble]) = withChildren(f(children))
-    def hasChild(c: Bubble) = children.exists(_ == c)
-
-    val toSugarNode: SugarNode
-    lazy val toNode: logic.Node = toSugarNode.toNode
-
-    def edit(startX: Int, startY: Int): BubbleEditing
+  var bubbleIDCounter: Int = 0
+  def nextBubbleID = {
+    val it = bubbleIDCounter
+    bubbleIDCounter += 1
+    it
   }
 
-  trait BubbleEditing {
-    val x: Var[Int]
-    val y: Var[Int]
-    def freeze: FrozenBubbleEditing
-    def render(g: Graphics2D, hsaFocus: Boolean): BubbleRendering
+  trait Bubble extends sugar.SugarNodeLike {
+    val id: Int = nextBubbleID
+
+    val initialChildren: Seq[Bubble]
+    lazy val children = new Source[Seq[Bubble]](initialChildren)
+
+    val localNode: Target[sugar.LocalNode]
+    lazy val toSugarNode = (localNode |@| children) { (node, children) =>
+      node.manifest(children map (sugar.AlreadyThere(_)))
+    }
+
+    def hasChild(c: Bubble) = children.now.exists(_ == c)
+
+    val initialLocation: Point
+    val location = new Source[Point](initialLocation)
+    val locationTarget: Target[Point] = location
+
+    /** Override this to specify components. */
+    val components: Traversable[JComponent] = Seq()
+
+    lazy val freeze: Target[FrozenBubble] = (locationTarget |@| localNode |@| children) { (loc, node, children) =>
+      FrozenBubble(id, loc, node, children map (_.id))
+    }
+
+    def render(g: Graphics2D): BubbleRendering
+
+    def hasFocus = editingState.focusedBubble.now map (_ == this) getOrElse false
+    def isFocusedParent = editingState.focusedParent.now map (_ == this) getOrElse false
   }
 
-  trait FrozenBubbleEditing {
-    val x: Int
-    val y: Int
+  case class FrozenBubble(id: Int, loc: Point, node: sugar.LocalNode, children: Seq[Int])
+
+  case class Point(x: Int, y:  Int) {
+    def +(dx: Int, dy: Int) = copy(x = x+dx, y = y+dy)
+    def +(d: (Int, Int)) = copy(x = x+d._1, y = y+d._2)
+  }
+  object Point {
+    def apply(p: (Int, Int)) = new Point(p._1, p._2)
   }
 
-  trait Edge {
-    val target: Bubble
-  }
-
-  def basicEdge(_target: =>Bubble) = new Edge {
-    val target = _target
-  }
-
-  trait DefaultEditing extends BubbleEditing {
-    val xInit: Int
-    val yInit: Int
-    val x = Var[Int](xInit)
-    val y = Var[Int](yInit)
-    def freeze = new DefaultFrozenEditing(x.now, y.now)
-  }
-
-  class DefaultFrozenEditing(val x: Int, val y: Int) extends FrozenBubbleEditing
+  case class BubbleRendering(bounds: Rectangle, parentAttachment: Point, childAttachments: Seq[Point])
 }

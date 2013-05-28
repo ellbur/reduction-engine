@@ -8,10 +8,7 @@ trait GeometricMotion { this: Editor =>
     currentGroup match {
       case Some(group) =>
         group foreach { bubble =>
-          editingState.get(bubble).now foreach { editing =>
-            editing.x() = editing.x.now + dx
-            editing.y() = editing.y.now + dy
-          }
+          bubble.location() = bubble.location.now + (dx, dy)
         }
         true
       case None =>
@@ -19,38 +16,29 @@ trait GeometricMotion { this: Editor =>
     }
   }
 
-  val moveCurrentGroupUp = Action("Slide subtree up", Soft) {
+  def moveCurrentGroupUp() {
     if (moveCurrentGroup(0, -10))
-      AsDescribed
-    else
-      NotPerformed
+      actSoft("Slide subtree up")
   }
 
-  val moveCurrentGroupDown = Action("Slide subtree down", Soft) {
+  def moveCurrentGroupDown() {
     if (moveCurrentGroup(0, +10))
-      AsDescribed
-    else
-      NotPerformed
+      actSoft("Slide subtree down")
   }
 
-  val moveCurrentGroupLeft = Action("Slide subtree left", Soft) {
+  def moveCurrentGroupLeft() {
     if (moveCurrentGroup(-10, 0))
-      AsDescribed
-    else
-      NotPerformed
+      actSoft("Slide subtree left")
   }
 
-  val moveCurrentGroupRight = Action("Slide subtree right", Soft) {
+  def moveCurrentGroupRight() {
     if (moveCurrentGroup(+10, 0))
-      AsDescribed
-    else
-      NotPerformed
+      actSoft("Slide subtree right")
   }
 
-  def moveGroup(group: Traversable[BubbleEditing], dx: Int, dy: Int) {
-    group foreach { editing =>
-      editing.x() = editing.x.now + dx
-      editing.y() = editing.y.now + dy
+  def moveGroup(group: Traversable[Bubble], dx: Int, dy: Int) {
+    group foreach { bubble =>
+      bubble.location() = bubble.location.now + (dx, dy)
     }
   }
 }

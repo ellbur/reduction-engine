@@ -4,58 +4,50 @@ package reductionengine.gui
 import collection.mutable.ArrayBuffer
 import javax.swing.SwingWorker
 import reactive.{EventStream, Signal, EventSource, Var}
-import java.awt.Point
-import ellbur.collection.reactivemap.clobber._
-import ellbur.dependenttypes._
 import scalaz._
 import Scalaz._
 import signalutils._
 import languageFeature.postfixOps
-import com.github.ellbur.collection.dependentmap.immutable.DependentMap
+import scala.collection.mutable
+import redosignals._
+import RedoSignals._
 
 trait OurBubbles { this: Editor =>
   import sugar.logic.ReductionPossibility
   import sugar.logic
 
-  case class EditedBubble(bubble: Bubble, editing: BubbleEditing)
-
   object editingState {
-    lazy val visibleBubbles = new ClobberFRMapID[Bubble, BubbleEditing](addOrRemoveBubbles)
-    lazy val focusedBubble = Var[Option[EditedBubble]](None)
-    lazy val focusedParent = Var[Option[Bubble]](None)
-    lazy val focusedChild = Var[Option[Bubble]](None)
+    val visibleBubbles = new Source[Set[Bubble]](Set())
+    val roots = new Source[Set[Bubble]](Set())
+    val focusedBubble = new Source[Option[Bubble]](None)
+    val focusedParent = new Source[Option[Bubble]](None)
+    val focusedChild = new Source[Option[Bubble]](None)
 
-    val addOrRemoveBubbles = new EventSource[Map[Bubble,BubbleEditing]]
-
-    def get(b: Bubble): Signal[Option[BubbleEditing]] = visibleBubbles.get(b)
-
-    def getEdited(b: Bubble): Signal[Option[EditedBubble]] = get(b) map (_ map { e =>
-      EditedBubble(b, e)
-    })
-
-    lazy val freeze: Signal[FrozenEditingState] = visibleBubbles.toMap map {
+    lazy val freeze = visibleBubbles flatMap {
       visibleBubbles =>
-        FrozenEditingState(
-          visibleBubbles.toList map { case (bubble, editing) =>
-            FrozenEditedBubble(bubble, editing.freeze)
-          }
-        )
+        for {
+          frozenVisible <- (visibleBubbles.toList map (_.freeze)).sequence
+          idMap = (frozenVisible zip (frozenVisible map (_.id))).toMap
+          frozenRoots <- roots map (_ map (_.id))
+        } yield {
+          FrozenEditingState(frozenVisible, frozenRoots)
+        }
     }
-
-    // TODO: This really shouldn't exist.
-    def bubbleFor(editing: BubbleEditing): Option[Bubble] =
-      visibleBubbles.toMap.now.toTraversable.find(_._2 == editing) map (_._1)
   }
   import editingState.focusedBubble
 
-  case class FrozenEditedBubble(bubble: Bubble, editing: FrozenBubbleEditing)
-  case class FrozenEditingState(bubbles: Seq[FrozenEditedBubble]) {
+  case class FrozenEditingState(bubbles: Traversable[FrozenBubble], roots: Traversable[Int]) {
     def goTo() {
-      println(s"Going to ${bubbles map (_.bubble)}")
+      val idMap = bubbles.toSeq map (_.id) zip bubbles.toSeq toMap
 
-      editingState.addOrRemoveBubbles.fire((bubbles map { edited =>
-        (edited.bubble, edited.bubble.edit(edited.editing.x, edited.editing.y))
-      }).toMap)
+      val remapping = mutable.Map[Int, Bubble]()
+      def remap(f: FrozenBubble): Bubble = remapping.getOrElseUpdate(f.id, {
+        manifest(f.node, f.loc, f.children map (remapId(_)))
+      })
+      def remapId(id: Int) = remap(idMap(id))
+
+      editingState.visibleBubbles() = (bubbles map (remap(_))).toSet
+      editingState.roots() = (roots map (remapId(_))).toSet
 
       jumpFocus(None)
     }
@@ -67,48 +59,41 @@ trait OurBubbles { this: Editor =>
   val K = NN(sugar.ApicalOperator(sugar.BasicOperator(logic.K(1, Seq(false))), Seq()))
   val S = NN(sugar.ApicalOperator(sugar.BasicOperator(logic.S(1)), Seq()))
   val standardIdiomKinds = Seq(
-    sugar.KindOfIdiom("Var", K, S)
+    sugar.standardIdiomKinds.lambda
   )
-
-  val wantsToBury = new EventSource[Unit]()
-  val wantsToRecollect = new EventSource[Unit]()
 
   sealed trait DoOrClear
   case object Do extends DoOrClear
   case object Clear extends DoOrClear
 
-  val buryChoices: Signal[Option[(Bubble, Seq[sugar.KindOfIdiom])]] =
-    (((wantsToBury map (_ => Do)) | (focusedBubble.change map (_ => Clear))) map {
-      case Clear => None
-      case Do => focusedBubble.now map { here =>
-        (here.bubble, standardIdiomKinds)
-      }
-    }).hold(None)
+  val buryChoices = new Source[Option[(Bubble, Seq[sugar.KindOfIdiom])]](None)
+  def openBuryChoices() {
+    buryChoices() = focusedBubble.now map { here => (here, standardIdiomKinds) }
+  }
+  focusedBubble.changed foreach { _ =>
+    buryChoices() = None
+  }
 
-  val recollectChoices: Signal[Option[(Bubble, Seq[sugar.KindOfIdiom])]] =
-    (((wantsToRecollect map (_ => Do)) | (focusedBubble.change map (_ => Clear))) map {
-      case Clear => None
-      case Do => focusedBubble.now map { here =>
-        (here.bubble, standardIdiomKinds)
-      }
-    }).hold(None)
+  val recollectChoices = new Source[Option[(Bubble, Seq[sugar.KindOfIdiom])]](None)
+  def openRecollectChoices() {
+    recollectChoices() = focusedBubble.now map { here => (here, standardIdiomKinds) }
+  }
+  focusedBubble.changed foreach { _ =>
+    recollectChoices() = None
+  }
 
-  type RPB = ReductionPossibility
-
-  focusedBubble.change foreach { editedBubble =>
+  focusedBubble foreach { editedBubble =>
     updateFocusedReductions(editedBubble)
   }
 
   case class FocusedReductions(where: Bubble, reductions: Seq[ReductionPossibility])
 
-  val focusedReductions = Var[Option[FocusedReductions]](None)
-  def updateFocusedReductions(editingBubble: Option[EditedBubble]) {
+  lazy val focusedReductions = new Source[Option[FocusedReductions]](None)
+  def updateFocusedReductions(bubble: Option[Bubble]) {
     focusedReductions() = None
 
-    editingBubble foreach { editingBubble =>
-      import editingBubble.bubble
-
-      val worker = new SwingWorker[Option[FocusedReductions], Any] {
+    bubble foreach { bubble =>
+      val worker = new SwingWorker[Option[FocusedReductions], Nothing] {
         def doInBackground() = {
           Some(FocusedReductions(
             bubble,

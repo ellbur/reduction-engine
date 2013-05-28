@@ -1,13 +1,16 @@
 
 package reductionengine.logic
 
+import scalaz._
+import Scalaz._
+
 trait Reductions { self: Nodes =>
   case class ReductionPossibility(name: String, remapping: RNode)
 
   sealed trait Replacement {
     def deepString: String
-    val toNode: Node
-    lazy val normalized: Option[RNode] = toNode.normalized
+    val toNode: M[Node]
+    lazy val normalized: M[Option[RNode]] = toNode flatMap (_.normalized)
   }
   case class AlreadyThere(is: NodeType) extends Replacement {
     override def toString = "*"
@@ -17,11 +20,11 @@ trait Reductions { self: Nodes =>
   case class NewNode(is: Node) extends Replacement {
     override def toString = is.toString
     def deepString = is.deepString
-    lazy val toNode = is
+    lazy val toNode = is.pure[M]
   }
 
   trait NodeLike {
-    val toNode: Node
+    val toNode: M[Node]
   }
 
   import self.{NewNode => NN}
@@ -69,7 +72,11 @@ trait Reductions { self: Nodes =>
   }
 
   object StandardReductions {
-    def find(x: RNode): Option[ReductionPossibility] = {
+    def find(x: RNode): M[Option[ReductionPossibility]] = {
+      none.pure
+
+      // TODO
+      /*
       import self.{NewNode => NN, AlreadyThere => AT}
 
       x match {
@@ -143,10 +150,11 @@ trait Reductions { self: Nodes =>
           ))
         case _ => None
       }
+      */
     }
   }
 
-  def normalize(x: RNode): Option[RNode] = {
+  def normalize(x: RNode): M[Option[RNode]] = {
     x.normalized
   }
 }

@@ -17,7 +17,6 @@ trait UndoRedo { self: Editor =>
       def valueChanged(ev: ListSelectionEvent) {
         if (!quiet) {
           val which = it.getSelectedIndex
-          println(s"Changed to $which")
           if (0 <= which && which < undoRedoModel.size) {
             undoRedoModel.get(which).asInstanceOf[UndoRedoPoint].goTo()
           }
@@ -33,7 +32,7 @@ trait UndoRedo { self: Editor =>
   lazy val undoRedoSidebar = undoRedoThings._2
   lazy val undoRedoList = undoRedoThings._1
 
-  case class UndoRedoPoint(val description: String, val state: FrozenEditingState) {
+  case class UndoRedoPoint(description: String, state: FrozenEditingState) {
     def goTo() {
       softEdit.now foreach { description =>
         saveUndoRedoPoint(description)
@@ -63,4 +62,23 @@ trait UndoRedo { self: Editor =>
   }
 
   saveUndoRedoPoint("--- Beginning ---")
+
+  // For editing
+  def undo() {
+    val i = undoRedoList.getSelectedIndex
+    if (i < undoRedoModel.size()-1) {
+      undoRedoList.setSelectedIndex(i + 1)
+    }
+    else
+      message("Nothing more to undo")
+  }
+
+  def redo() {
+    val i = undoRedoList.getSelectedIndex
+    if (i > 0) {
+      undoRedoList.setSelectedIndex(i - 1)
+    }
+    else
+      message("Nothing more to redo")
+  }
 }

@@ -7,7 +7,7 @@ import reactive.EventSource
 import graphutils.GraphLayout4
 
 trait Editing { self: Editor =>
-  import sugar.RNode
+  import sugar.{RNode, FocusedRNode}
   import sugar.{NewNode => NN, AlreadyThere => AT}
   import sugar.logic.{AlreadyThere => LAT}
   import self.{sugar => s}
@@ -18,42 +18,42 @@ trait Editing { self: Editor =>
     mysteryCounter
   }
   def nextMystery: sugar.Mystery = {
-    sugar.Mystery(nextMysteryCounter)
+    sugar.Mystery(nextMysteryCounter.toString)
   }
 
   def makeNewRootAtPoint(x: Int, y: Int) {
     import editingState._
 
-    val mystery = Mystery(nextMysteryCounter)
-    val root = Root(mystery)
+    val mystery = new Mystery(Point(x, y), nextMysteryCounter.toString)
 
-    val rootEditing = root.edit(x, y)
-    val mysteryEditing = mystery.edit(x, y + 40)
+    val old = visibleBubbles.now
+    val next = old + mystery
 
-    val old = visibleBubbles.toMap.now
-    val next = old + ((root, rootEditing)) + ((mystery, mysteryEditing))
+    visibleBubbles() = next
+    roots() = roots.now + mystery
 
-    addOrRemoveBubbles.fire(next)
-
-    focusedBubble() = Some(EditedBubble(mystery, mysteryEditing))
+    focusedBubble() = Some(mystery)
     focusedChild() = None
-    focusedParent() = Some(root)
+    focusedParent() = None
 
     actHard(s"Make new root at ($x, $y)")
   }
 
   def joinTo(target: Bubble) {
-    fillAHole(_ => AT(target))
+    fillAHole { _ =>
+      val t = AT(target)
+      FocusedRNode(t, Some(t))
+    }
     actHard(s"Join to $target")
   }
 
-  def replace(at: Bubble, becomes: RNode) {
+  def replace(at: Bubble, becomes: FocusedRNode) {
     doReplace.fire((at, becomes))
   }
 
-  def fillAHole(replacing: Mystery => RNode): Boolean = {
+  def fillAHole(replacing: Mystery => FocusedRNode): Boolean = {
     editingState.focusedBubble.now match {
-      case Some(EditedBubble(it: Mystery, _)) =>
+      case Some(it: Mystery) =>
         replace(it, replacing(it))
         true
       case _ =>
@@ -62,164 +62,193 @@ trait Editing { self: Editor =>
     }
   }
 
-  def withSelected(perform: EditedBubble => ResultingDescription): ResultingDescription = {
+  def withSelected(perform: Bubble => Unit) {
     editingState.focusedBubble.now match {
       case Some(thing) => perform(thing)
-      case _ =>
-        message("Nothing selected.")
-        NotPerformed
+      case _ => message("Nothing selected.")
     }
   }
 
-  def doOperator(op: sugar.SugarOperator): Action = {
-    Action(s"Insert $op", Hard) {
-      fillAHole(_ =>
-        NN(sugar.ApicalOperator(op, 1 to op.nArgs map { i =>
-          NN(
-            if (i == 1)
-              sugar.Focused(NN(nextMystery))
-            else
-              nextMystery
-          )
-        })
-      )) match {
-        case true =>
-          AsDescribed
-        case false =>
-          NotPerformed
-      }
-    }
+  def doOperator(op: sugar.SugarOperator) {
+    if(fillAHole { _ =>
+      val args = 1 to op.nArgs map { i => NN(nextMystery) }
+      val main = NN(s.ApicalOperator(op, args))
+      val focused = if (args.length > 0) Some(args(0)) else Some(main)
+      FocusedRNode(main, focused)
+    })
+      actHard(s"Insert ${op.name}")
   }
 
-  val insertApp = Action("Insert app", Hard) {
-    fillAHole(_ =>
-      NN(sugar.App(NN(sugar.Focused(NN(nextMystery))), NN(nextMystery)))
-    ) match {
-      case true => AsDescribed
-      case false => NotPerformed
-    }
+  def insertApp() {
+    if(fillAHole {_ =>
+      val car, cdr = NN(nextMystery)
+      FocusedRNode(
+        NN(s.App(car, cdr)),
+        Some(car)
+      )
+    })
+      actHard("Insert ·")
   }
 
   def beginTypingNumber(`with`: Option[Char]) {
     val progress = `with` map (_.toString) getOrElse ""
 
-    fillAHole(_ => NN(
-      sugar.Focused(NN(sugar.NumberEditor(nextMysteryCounter, progress)))
-    ))
-  }
-
-  val beginTypingVariable = Action("Insert variable", Nada) {
-    fillAHole(_ =>
-      NN(sugar.VariableEditor(nextMysteryCounter, ""))
-    ) match {
-      case true => AsDescribed
-      case false => NotPerformed
+    fillAHole { _ =>
+      val rep = NN(sugar.NumberEditor(nextMysteryCounter.toString, progress))
+      FocusedRNode(rep, Some(rep))
     }
   }
 
-  val stripMystery = Action("Partially apply", Hard) {
+  def beginTypingVariable() {
+    fillAHole { _ =>
+      val rep = NN(sugar.VariableEditor(nextMysteryCounter.toString, ""))
+      FocusedRNode(rep, Some(rep))
+    }
+  }
+
+  def stripMystery() {
     editingState.focusedBubble.now match {
       case None =>
         message("Nothing selected.")
-        NotPerformed
-      case Some(EditedBubble(arg: Mystery, _)) =>
+      case Some(arg: Mystery) =>
         editingState.focusedParent.now match {
           case None =>
             message("No parent selected.")
-            NotPerformed
           case Some(parent) =>
             val children = parent.children
-            val where = children.indexOf(arg)
+            val where = children.now.indexOf(arg)
             if (where == -1) {
               message("Parent and child are not related (probably a bug).")
-              NotPerformed
             }
             else {
-              parent.toSugarNode.eliminatingChildAt(where) match {
+              parent.toSugarNode.now.eliminatingChildAt(where) match {
                 case Left(msg) =>
                   message(msg)
                 case Right(result) =>
-                  replace(parent, result)
+                  replace(parent, result.now)
+                  actHard("Partially apply")
               }
-              AsDescribed
             }
         }
       case Some(_) =>
         message("Not a hole.")
-        NotPerformed
     }
   }
 
-  val clearToMystery = Action("Clear to hole", Hard) {
+  def stripAllMysteries() {
+    def stripAt(parent: Bubble) {
+      val children = parent.children.now
+      val toEliminate = children.zipWithIndex collect {
+        case (_: Mystery, i) => i
+      }
+      parent.toSugarNode.now.eliminatingChildrenAt(toEliminate) match {
+        case Left(msg) => message(msg)
+        case Right(result) =>
+          replace(parent, result)
+          actHard("Partially apply")
+      }
+    }
+
+    editingState.focusedBubble.now match {
+      case None => message("Nothing selected")
+      case Some(arg: Mystery) =>
+        editingState.focusedParent.now match {
+          case None => message("No parent selected")
+          case Some(parent) => stripAt(parent)
+        }
+      case Some(notMystery) =>
+        stripAt(notMystery)
+    }
+  }
+
+  def clearToMystery() {
     import editingState._
     focusedBubble.now match {
       case Some(bubble) =>
-        doReplace.fire((bubble.bubble, NN(nextMystery)))
-        AsDescribed
+        val m = NN(nextMystery)
+        replace(bubble, FocusedRNode(m, Some(m)))
+        actHard("Clear subtree")
       case _ =>
-        NotPerformed
     }
   }
 
-  val insertChild = Action("Insert argument", Hard) {
+  def insertChild() {
     import editingState._
 
     focusedBubble.now match {
       case None =>
         message("Nothing selected.")
-        NotPerformed
-      case Some(EditedBubble(bubble, _)) =>
+      case Some(bubble) =>
         replace(bubble,
-          bubble.toSugarNode.insertingChild(sugar.AlreadyThere(bubble), NN(nextMystery))
+          bubble.toSugarNode.now.insertingChild(sugar.AlreadyThere(bubble), NN(nextMystery))
         )
-        AsDescribed
+        actHard("Insert arg")
     }
   }
 
-  val reformatSubtree = Action("Reformat subtree", Hard) {
+  def absorbParent() {
+    import editingState._
+    (focusedBubble.now, focusedParent.now) match {
+      case (Some(bubble), Some(parent)) =>
+        val it = AT(bubble)
+        replace(parent, FocusedRNode(it, Some(it)))
+        actHard("Absorb parent")
+      case (Some(_), None) =>
+        message("No parent selected")
+      case (None, _) =>
+        message("Nothing selected")
+    }
+  }
+
+  def unroot() {
+    withSelected { bubble =>
+      val before = editingState.roots.now
+      editingState.roots() = before.filter(_ != bubble)
+    }
+  }
+
+  def label() {
+    // TODO
+  }
+
+  def comment() {
+    // TODO
+  }
+
+  def uncomment() {
+    // TODO
+  }
+
+  def reformatSubtree() {
     currentGroup match {
       case Some(group) =>
         val groupSet = group.toSet
-
-        val before = editingState.visibleBubbles.toMap.now.toTraversable map {
-          case (bubble, editing) =>
-            (bubble, Some(editing))
-        }
-        val after = reposition(before, groupSet, None)
-        editingState.addOrRemoveBubbles.fire(after map {
-          case EditedBubble(bubble, editing) => (bubble, editing)
-        } toMap)
-        AsDescribed
+        reposition(editingState.visibleBubbles.now, groupSet, None)
+        actHard("Reformat")
       case None =>
-        NotPerformed
     }
   }
 
   def insertRoot(rnode: RNode, x: Int, y: Int) {
     import editingState._
 
-    val mystery = Mystery(nextMysteryCounter)
-    val root = Root(mystery)
+    val mystery = new Mystery(Point(x, y), nextMysteryCounter.toString)
 
-    val rootEditing = root.edit(x, y)
-    val mysteryEditing = mystery.edit(x, y + 40)
+    val old = visibleBubbles.now
+    val next = old + mystery
 
-    val old = visibleBubbles.toMap.now
-    val next = old + ((root, rootEditing)) + ((mystery, mysteryEditing))
-
-    addOrRemoveBubbles.fire(next)
-
-    replace(mystery, rnode)
+    visibleBubbles() = next
+    roots() = roots.now + mystery
+    replace(mystery, FocusedRNode(rnode, Some(rnode)))
   }
 
   def reposition(
-    things: Traversable[(Bubble, Option[BubbleEditing])],
+    things: Traversable[Bubble],
     disturbed: Set[Bubble],
     center: Option[(Double, Double)]
-  ): Traversable[EditedBubble] =
-  {
+  ) {
     val thingList = things.toIndexedSeq
-    val bubbleIndices = thingList.map(_._1).zipWithIndex.toMap
+    val rbIndices = thingList.zipWithIndex.toMap
 
     def screenCenter = (
       canvas.getX.toDouble + canvas.getWidth.toDouble/2,
@@ -227,88 +256,92 @@ trait Editing { self: Editor =>
     )
     val reallyCenter = center getOrElse screenCenter
 
-    val initial = thingList map { case (bubble, optionalEditing) =>
+    val initial = thingList map { bubble =>
       GraphLayout4.Node(
-        origPosition = optionalEditing map (editing =>
-          (editing.x.now.toDouble, editing.y.now.toDouble)
-          ),
-        disturb = disturbed contains bubble,
-        adjacency = bubble.children flatMap (bubbleIndices.get(_))
+        origPosition = {
+          val loc = bubble.location.now
+          Some((loc.x, loc.y))
+        },
+        disturb = disturbed.contains(bubble),
+        adjacency = bubble.children.now flatMap (rbIndices.get(_))
       )
     }
 
-    val coordinates = GraphLayout4.computeLayout(
-      40.0,
-      reallyCenter,
-      initial
-    )
+    val computed = GraphLayout4.computeLayout(20.0, 30.0, reallyCenter, initial)
+    val points = computed map { case(x, y) => Point(x.toInt, y.toInt) }
 
-    (thingList.zipWithIndex map { case ((bubble, optionalEditing), index) =>
-      val (newX, newY) = coordinates(index)
-      EditedBubble(bubble, optionalEditing match {
-        case Some(editing) =>
-          editing.x() = newX.toInt
-          editing.y() = newY.toInt
-          editing
-        case None =>
-          bubble.edit(newX.toInt, newY.toInt)
-      })
-    })
+    thingList zip points foreach { case (bubble, p) =>
+      bubble.location() = p
+    }
   }
 
-  val showBuryMenu = Action("Bury", Nada) {
-    wantsToBury.fire(())
-    AsDescribed
+  def showBuryMenu() {
+    openBuryChoices()
   }
 
-  val showRecollectMenu = Action("Recollect", Nada) {
-    wantsToRecollect.fire(())
-    AsDescribed
+  def showRecollectMenu() {
+    openRecollectChoices()
   }
 
   def addAntiPure(idiom: sugar.KindOfIdiom, to: Bubble) {
-    replace(to, NN(s.Focused(
-      NN(s.AntiPureNameEditor(idiom, "", AT(to)))
-    )))
+    val editor = NN(s.AntiPureNameEditor(idiom, "", AT(to)))
+    replace(to, FocusedRNode(editor, Some(editor)))
   }
 
   def addPure(idiom: sugar.KindOfIdiom, to: Bubble) {
-    replace(to, NN(s.Focused(
-      NN(s.PureNameEditor(idiom, "", AT(to)))
-    )))
+    val editor = NN(s.PureNameEditor(idiom, "", AT(to)))
+    replace(to, FocusedRNode(editor, Some(editor)))
   }
 
-  val normalizeInPlace = Action("Normalize", Hard) {
+  def normalizeInPlace() {
     withSelected { rootBubble =>
-      sugar.logic.normalize(sugar.logic.AlreadyThere(rootBubble.bubble)) match {
+      sugar.logic.normalize(sugar.logic.AlreadyThere(rootBubble)).now match {
         case Some(normalized) =>
           val backToSugar = sugar.SugarNode.translateDeep(normalized)
-          replace(rootBubble.bubble, backToSugar)
-          AsDescribed
+          replace(rootBubble, FocusedRNode(backToSugar, Some(backToSugar)))
+          actHard("Normalize")
         case None =>
           message("Already in normal form.")
-          NotPerformed
       }
     }
   }
 
-  val normalizeCopy = Action("Compute Normal", Hard) {
+  def normalizeCopy() {
     withSelected { rootBubble =>
-      val normalized = sugar.logic.normalize(LAT(rootBubble.bubble)) match {
+      val normalized = sugar.logic.normalize(LAT(rootBubble)).now match {
         case Some(normalized) => sugar.SugarNode.translateDeep(normalized)
-        case None => AT(rootBubble.bubble)
+        case None => AT(rootBubble)
       }
 
-      insertRoot(normalized, rootBubble.editing.x.now + 60, rootBubble.editing.y.now)
+      val loc = rootBubble.location.now
+      insertRoot(normalized, loc.x + 60, loc.y)
 
-      AsDescribed
+      actHard("Compute normal")
     }
   }
 
-  val duplicateFully = Action("Duplicate Subtree", Hard) {
+  def duplicateFully() {
     withSelected { rootBubble =>
-      replace(rootBubble.bubble, NN(rootBubble.bubble.toSugarNode.duplicated))
-      AsDescribed
+      val dup = NN(rootBubble.toSugarNode.now.duplicated.now)
+      replace(rootBubble, FocusedRNode(dup, Some(dup)))
+      actHard("Duplicate subtree")
+    }
+  }
+
+  def reduceCurrentNode() {
+    editingState.focusedBubble.now match {
+      case Some(bubble) =>
+        val available = findReductionPossibilities(bubble)
+        available.headOption match {
+          case Some(first) =>
+            val translated = sugar.SugarNode.translateDeep(first.remapping)
+            replace(bubble, FocusedRNode(translated, Some(translated)))
+            actHard(s"${first.name}")
+          case None =>
+            message("No reductions")
+        }
+      case None =>
+        message("Nothing selected")
     }
   }
 }
