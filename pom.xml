@@ -45,6 +45,11 @@
           <artifactId>reactive-core_2.10</artifactId>
           <version>0.3.0</version>
       </dependency>
+      <dependency>
+          <groupId>com.github.ellbur</groupId>
+          <artifactId>monadic-match_2.10</artifactId>
+          <version>0.2-SNAPSHOT</version>
+      </dependency>
   </dependencies>
 </project>
 

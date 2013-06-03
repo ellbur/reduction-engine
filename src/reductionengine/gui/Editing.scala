@@ -1,9 +1,6 @@
 
 package reductionengine.gui
 import language.postfixOps
-import java.awt.Point
-import scala.collection.mutable
-import reactive.EventSource
 import graphutils.GraphLayout4
 
 trait Editing { self: Editor =>

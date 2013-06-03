@@ -3,14 +3,13 @@ package reductionengine.gui
 
 import collection.mutable.ArrayBuffer
 import javax.swing.SwingWorker
-import reactive.{EventStream, Signal, EventSource, Var}
 import scalaz._
 import Scalaz._
-import signalutils._
 import languageFeature.postfixOps
 import scala.collection.mutable
 import redosignals._
 import RedoSignals._
+import javax.swing.text.html.HTMLDocument
 
 trait OurBubbles { this: Editor =>
   import sugar.logic.ReductionPossibility
@@ -38,7 +37,7 @@ trait OurBubbles { this: Editor =>
 
   case class FrozenEditingState(bubbles: Traversable[FrozenBubble], roots: Traversable[Int]) {
     def goTo() {
-      val idMap = bubbles.toSeq map (_.id) zip bubbles.toSeq toMap
+      val idMap = (bubbles.toSeq map (_.id) zip bubbles.toSeq).toMap
 
       val remapping = mutable.Map[Int, Bubble]()
       def remap(f: FrozenBubble): Bubble = remapping.getOrElseUpdate(f.id, {

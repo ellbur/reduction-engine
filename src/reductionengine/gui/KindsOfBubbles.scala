@@ -2,13 +2,10 @@
 package reductionengine.gui
 
 import java.awt.{Rectangle, BasicStroke, Color, Graphics2D}
-import collection.mutable.ArrayBuffer
 import javax.swing.JTextField
 import java.awt.event.{ActionEvent, ActionListener}
 import scalaz._
 import Scalaz._
-import reactive.{Observing, Signal}
-import signalutils._
 import redosignals._
 import RedoSignals._
 

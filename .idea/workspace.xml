@@ -4,7 +4,7 @@
     <list default="true" id="29447e7c-c782-4610-a788-9ed4ef89adb0" name="Default" comment="" />
     <ignored path="reduction-engine.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/pom.xml" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369602312483" ignored="false" />
+    <file path="/pom.xml" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369724679452" ignored="false" />
     <file path="/Bubbles.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369698785442" ignored="false" />
     <file path="/Targets.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369682492029" ignored="false" />
     <file path="/RedoSignals.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369598832462" ignored="false" />
@@ -12,7 +12,7 @@
     <file path="/Utils.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369600096189" ignored="false" />
     <file path="/Watching.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369600139665" ignored="false" />
     <file path="/KindsOfBubbles.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369699461043" ignored="false" />
-    <file path="/OurBubbles.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369699498262" ignored="false" />
+    <file path="/OurBubbles.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1370217833038" ignored="false" />
     <file path="/Layout.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369692148247" ignored="false" />
     <file path="/Editor.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369600961144" ignored="false" />
     <file path="/DiamondSignal.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369602866993" ignored="false" />
@@ -24,6 +24,12 @@
     <file path="/UndoRedo.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369686381221" ignored="false" />
     <file path="/GraphLayout4.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369693506708" ignored="false" />
     <file path="/SugarNodes.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369698967873" ignored="false" />
+    <file path="/Reductions.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1370212100980" ignored="false" />
+    <file path="/MonadicMatch.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369801213294" ignored="false" />
+    <file path="/Test4.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369725972249" ignored="false" />
+    <file path="$MAVEN_REPOSITORY$/com/github/ellbur/monadic-match_2.10/0.2-SNAPSHOT/monadic-match_2.10-0.2-SNAPSHOT.jar!/ellbur/monadicmatch/MonadicMatch.class" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369726216803" ignored="false" />
+    <file path="/Test5.scala" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1369726696420" ignored="false" />
+    <file path="/fragment.java" changelist="29447e7c-c782-4610-a788-9ed4ef89adb0" time="1370210269171" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +44,7 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -74,7 +81,6 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </breakpoint_any>
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -84,10 +90,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="OurBubbles.scala" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/OurBubbles.scala">
+      <file leaf-file-name="Nodes.scala" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/reductionengine/logic/Nodes.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="41" column="6" selection-start="1306" selection-end="1306" vertical-scroll-proportion="0.4134715">
+            <state line="76" column="3" selection-start="2168" selection-end="2168" vertical-scroll-proportion="0.25181347">
               <folding />
             </state>
           </provider>
@@ -103,22 +109,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/reductionengine/gui/Editor.scala" />
-        <option value="$PROJECT_DIR$/../redo-style-signals/pom.xml" />
-        <option value="$PROJECT_DIR$/playground/DiamondSignal.scala" />
-        <option value="$PROJECT_DIR$/../redo-style-signals/test/Async.scala" />
-        <option value="$PROJECT_DIR$/../redo-style-signals/src/redosignals/Targets.scala" />
-        <option value="$PROJECT_DIR$/src/reductionengine/gui/GeometricMotion.scala" />
         <option value="$PROJECT_DIR$/src/reductionengine/gui/UndoRedo.scala" />
         <option value="$PROJECT_DIR$/src/reductionengine/gui/DiagramMotion.scala" />
         <option value="$PROJECT_DIR$/src/reductionengine/gui/Layout.scala" />
         <option value="$PROJECT_DIR$/src/graphutils/GraphLayout4.scala" />
         <option value="$PROJECT_DIR$/src/reductionengine/gui/Bubbles.scala" />
         <option value="$PROJECT_DIR$/src/reductionengine/sugar/SugarNodes.scala" />
-        <option value="$PROJECT_DIR$/src/reductionengine/gui/KindsOfBubbles.scala" />
-        <option value="$PROJECT_DIR$/src/reductionengine/gui/OurBubbles.scala" />
         <option value="$PROJECT_DIR$/src/reductionengine/gui/Inputs.scala" />
         <option value="$PROJECT_DIR$/src/reductionengine/gui/Editing.scala" />
+        <option value="$PROJECT_DIR$/src/reductionengine/gui/KindsOfBubbles.scala" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/../monadic-match/test/Test4.scala" />
+        <option value="$PROJECT_DIR$/../monadic-match/test/Test5.scala" />
+        <option value="$PROJECT_DIR$/../monadic-match/src/ellbur/monadicmatch/MonadicMatch.scala" />
+        <option value="$PROJECT_DIR$/src/reductionengine/logic/Reductions.scala" />
+        <option value="$PROJECT_DIR$/src/reductionengine/gui/OurBubbles.scala" />
+        <option value="$PROJECT_DIR$/src/reductionengine/logic/Nodes.scala" />
       </list>
     </option>
   </component>
@@ -200,6 +206,8 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -208,74 +216,8 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="reduction-engine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="reduction-engine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="reduction-engine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="reduction-engine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="reduction-engine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="reduction-engine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="reductionengine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="reduction-engine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="reduction-engine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="reductionengine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gui" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -287,18 +229,18 @@
     <property name="options.lastSelected" value="Errors" />
     <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../redo-style-signals/redo-signals.iml" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../monadic-match/monadic-match.iml" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="GoToClass.includeJavaFiles" value="false" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
-    <property name="MemberChooser.showClasses" value="true" />
     <property name="Repository.Attach.Sources" value="false" />
+    <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.searchVisible" value="true" />
-    <property name="options.splitter.details.proportions" value="0.2" />
-    <property name="Downloaded.Files.Path" value="$PROJECT_DIR$/lib" />
     <property name="dynamic.classpath" value="false" />
+    <property name="Downloaded.Files.Path" value="$PROJECT_DIR$/lib" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RunManager" selected="Application.Main">
     <configuration default="false" name="Main" type="Application" factoryName="Application" temporary="true">
@@ -349,6 +291,38 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
+    <configuration default="false" name="Test4" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="Test4" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="monadic-match" />
+      <envs />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Test5" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="Test5" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="monadic-match" />
+      <envs />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
       <option name="SERVER_MODE" value="false" />
@@ -384,16 +358,20 @@
       <envs />
       <method />
     </configuration>
-    <list size="3">
+    <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Application.Main" />
       <item index="1" class="java.lang.String" itemvalue="Application.Watching" />
       <item index="2" class="java.lang.String" itemvalue="Application.DiamondSignal" />
+      <item index="3" class="java.lang.String" itemvalue="Application.Test4" />
+      <item index="4" class="java.lang.String" itemvalue="Application.Test5" />
     </list>
     <recent_temporary>
-      <list size="3">
+      <list size="5">
         <item index="0" class="java.lang.String" itemvalue="Application.Main" />
-        <item index="1" class="java.lang.String" itemvalue="Application.DiamondSignal" />
-        <item index="2" class="java.lang.String" itemvalue="Application.Watching" />
+        <item index="1" class="java.lang.String" itemvalue="Application.Test5" />
+        <item index="2" class="java.lang.String" itemvalue="Application.Test4" />
+        <item index="3" class="java.lang.String" itemvalue="Application.DiamondSignal" />
+        <item index="4" class="java.lang.String" itemvalue="Application.Watching" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
@@ -412,7 +390,7 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.32977587" sideWeight="0.6708075" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.18996799" sideWeight="0.6705539" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.18943436" sideWeight="0.6705539" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
@@ -488,106 +466,88 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../redo-style-signals/test/Async.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="3" selection-start="19" selection-end="19" vertical-scroll-proportion="0.07859359" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Reductions.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../redo-style-signals/src/redosignals/Targets.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="78" column="2" selection-start="1723" selection-end="1723" vertical-scroll-proportion="0.29326424" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/GeometricMotion.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="6" selection-start="366" selection-end="366" vertical-scroll-proportion="0.21243523" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/UndoRedo.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="2" selection-start="1704" selection-end="1704" vertical-scroll-proportion="0.72797525">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/DiagramMotion.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="124" column="16" selection-start="3492" selection-end="3492" vertical-scroll-proportion="0.826943">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Layout.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="92" column="76" selection-start="3072" selection-end="3072" vertical-scroll-proportion="0.59067357">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Rendering.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.39067358">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/graphutils/GraphLayout4.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="4" selection-start="1482" selection-end="1482" vertical-scroll-proportion="0.31088084">
-          <folding />
-        </state>
+        <state line="52" column="4" selection-start="1482" selection-end="1482" vertical-scroll-proportion="0.31088084" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Bubbles.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="56" column="2" selection-start="1579" selection-end="1579" vertical-scroll-proportion="0.62590677">
-          <folding />
-        </state>
+        <state line="56" column="2" selection-start="1579" selection-end="1579" vertical-scroll-proportion="0.62590677" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reductionengine/sugar/SugarNodes.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="2" selection-start="268" selection-end="268" vertical-scroll-proportion="0.27564767">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/KindsOfBubbles.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="112" column="9" selection-start="3483" selection-end="3483" vertical-scroll-proportion="0.4507772">
-          <folding />
-        </state>
+        <state line="15" column="2" selection-start="268" selection-end="268" vertical-scroll-proportion="0.27564767" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reductionengine/sugar/Idioms.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="2" selection-start="703" selection-end="703" vertical-scroll-proportion="0.4134715">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Inputs.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="4" selection-start="261" selection-end="261" vertical-scroll-proportion="0.21658032">
-          <folding />
-        </state>
+        <state line="21" column="2" selection-start="703" selection-end="703" vertical-scroll-proportion="0.4134715" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Editing.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="208" column="2" selection-start="5405" selection-end="5405" vertical-scroll-proportion="0.23626943">
-          <folding />
-        </state>
+        <state line="208" column="2" selection-start="5405" selection-end="5405" vertical-scroll-proportion="0.23626943" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/Inputs.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="4" selection-start="261" selection-end="261" vertical-scroll-proportion="0.21658032" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="62" selection-start="1156" selection-end="1156" vertical-scroll-proportion="0.2106825" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/KindsOfBubbles.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../monadic-match/test/Test4.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="31" selection-start="659" selection-end="659" vertical-scroll-proportion="0.7489051" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../monadic-match/test/Test5.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="2" selection-start="235" selection-end="235" vertical-scroll-proportion="0.38832116" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../monadic-match/src/ellbur/monadicmatch/MonadicMatch.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="39" column="4" selection-start="1129" selection-end="1129" vertical-scroll-proportion="0.43316063" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../monadic-match/test/Test3.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="22" selection-start="77" selection-end="77" vertical-scroll-proportion="0.098241985" />
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/ellbur/monadic-match_2.10/0.2-SNAPSHOT/monadic-match_2.10-0.2-SNAPSHOT-sources.jar!/ellbur/monadicmatch/MonadicMatch.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="73" column="57" selection-start="2168" selection-end="2168" vertical-scroll-proportion="0.2911917" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reductionengine/gui/OurBubbles.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="6" selection-start="1306" selection-end="1306" vertical-scroll-proportion="0.4134715">
+        <state line="16" column="2" selection-start="380" selection-end="380" vertical-scroll-proportion="0.13782384">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reductionengine/logic/Reductions.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="141" column="2" selection-start="3903" selection-end="3903" vertical-scroll-proportion="0.78756475">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reductionengine/logic/Nodes.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="76" column="3" selection-start="2168" selection-end="2168" vertical-scroll-proportion="0.25181347">
           <folding />
         </state>
       </provider>
@@ -650,6 +610,7 @@
             <option name="proportions">
               <list>
                 <option value="0.2" />
+                <option value="0.5" />
               </list>
             </option>
           </splitter-proportions>
