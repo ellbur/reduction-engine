@@ -121,7 +121,7 @@ trait DiagramMotion { this: Editor =>
               else {
                 val olderSiblings = direction match {
                   case Forward => siblings.drop(ourIndex + 1)
-                  case Backward => siblings.take(ourIndex)
+                  case Backward => siblings.take(ourIndex).reverse
                 }
                 def searchSiblings(siblings: List[Bubble]): Boolean = siblings match {
                   case Nil => false
@@ -131,7 +131,11 @@ trait DiagramMotion { this: Editor =>
                         jumpFocus(Some(hole))
                         true
                       case _ =>
-                        if (searchSiblings(sibling.children.now.toList))
+                        val children = direction match {
+                          case Forward => sibling.children.now
+                          case Backward => sibling.children.now.reverse
+                        }
+                        if (searchSiblings(children.toList))
                           true
                         else
                           searchSiblings(siblings)

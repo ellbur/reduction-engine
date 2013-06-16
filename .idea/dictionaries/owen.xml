@@ -2,6 +2,7 @@
   <dictionary name="owen">
     <words>
       <w>combinators</w>
+      <w>graphviz</w>
     </words>
   </dictionary>
 </component>

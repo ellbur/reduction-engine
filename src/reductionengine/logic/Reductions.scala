@@ -12,8 +12,9 @@ trait Reductions { self: Nodes =>
     def deepString: String
     val toNode: M[Node]
     lazy val normalized: M[Option[RNode]] = toNode flatMap (_.normalized)
-
     def apply(x: RNode): RNode = NewNode(App(this, x))
+    lazy val locallyReducible = toNode flatMap (_.locallyReducible)
+    def isPureIn(idiom: Idiom) = toNode flatMap (_.isPureIn(idiom))
   }
   case class AlreadyThere(is: NodeType) extends Replacement {
     override def toString = "*"
@@ -34,7 +35,7 @@ trait Reductions { self: Nodes =>
 
   object monadicMatch extends MonadicMatch {
     type M[+X] = self.M[X]
-    lazy val monad = self.monad
+    lazy implicit val monad = self.monad
   }
   import monadicMatch._
 
@@ -66,6 +67,14 @@ trait Reductions { self: Nodes =>
     case Y => ()
   }
 
+  val JLike = OperatorLiteralLike -/> {
+    case J => ()
+  }
+
+  val PrLike = OperatorLiteralLike -/> {
+    case Pr => ()
+  }
+
   val PlusLike = OperatorLiteralLike -/> {
     case Plus => ()
   }
@@ -83,16 +92,22 @@ trait Reductions { self: Nodes =>
   }
 
   val PureLike = Id[RNode] --> (_.toNode) -/> {
-    case Pure(idiom, n) => (idiom, n)
+    case Pure(idiom, is) => (idiom, is)
   }
 
   val AntiPureLike = Id[RNode] --> (_.toNode) -/> {
-    case AntiPure(idiom, n) => (idiom, n)
+    case AntiPure(idiom) => idiom
   }
 
   object StandardReductions {
     def find(x: RNode): M[Option[ReductionPossibility]] = {
+      implicit val monad: Monad[M] = self.monad
+
       import self.{NewNode => NN, AlreadyThere => AT}
+
+      val s = NN(OperatorLiteral(S1))
+      val k = NN(OperatorLiteral(K_))
+      val i = NN(OperatorLiteral(I))
 
       x mmatch (
           AppLike(ILike zip Id) -> { case (_, x) =>
@@ -127,6 +142,18 @@ trait Reductions { self: Nodes =>
             val y = NN(OperatorLiteral(Y))
             ReductionPossibility("Reduce Y", f(y(f))(x))
           }
+        | AppLike(AppLike(JLike zip Id) zip Id) -> { case ((_, a), b) =>
+            ReductionPossibility("Reduce J", a(b)(b))
+          }
+        | AppLike(AppLike(AppLike(PrLike zip Id) zip Id) zip Id) -> { case (((_, m), x), arg) =>
+            ReductionPossibility("Reduce Pr",
+              m
+                (
+                  s(i)(k(arg))
+                )
+                (x)
+            )
+          }
         | AppLike(AppLike(PlusLike zip IntLiteralLike) zip IntLiteralLike) -> { case ((_, a), b) =>
             ReductionPossibility("Perform Addition", NN(IntLiteral(a + b)))
           }
@@ -135,6 +162,67 @@ trait Reductions { self: Nodes =>
           }
         | AppLike(AppLike(MinusLike zip IntLiteralLike) zip IntLiteralLike) -> { case ((_, a), b)
             => ReductionPossibility("Perform Subtraction", NN(IntLiteral(a - b)))
+          }
+        | PureLike --/> { case (idiom, x) =>
+            x.isPureIn(idiom) map {
+              case false => None
+              case true =>
+                val p = idiom.pure
+                Some(ReductionPossibility("Constify",
+                  p(x)
+                ))
+            }
+          }
+        // We limit push-down to places where it is not locally reducible in order to avoid
+        // passing through an anti-pure.
+        | PureLike(Id zip AppLike(Id zip Id)) --/> { case (idiom, (f, x)) =>
+            f.locallyReducible flatMap {
+              case true => None.pure[M]
+              case false =>
+                f mmatch (
+                    AntiPureLike --> { otherIdiom =>
+                      if (otherIdiom == idiom)
+                        x.isPureIn(idiom) map {
+                          case true =>
+                            Some(ReductionPossibility("Cancel",
+                              x
+                            ))
+                          case false =>
+                            idiom.join match {
+                              case None => None
+                              case Some(join) =>
+                                Some(ReductionPossibility("Join",
+                                  join(NN(Pure(idiom, x)))
+                                ))
+                            }
+                        }
+                      else {
+                        idiom.predict match {
+                          case None =>
+                            // We must pass through, hopefully leading up to a sequence.
+                            val a = idiom.app
+                            Some(ReductionPossibility("Push down",
+                              a(NN(Pure(idiom, f)))(NN(Pure(idiom, x)))
+                            )).pure[M]
+                          case Some(predict) =>
+                            val a = otherIdiom.app
+                            val p = otherIdiom.pure
+                            val map = s(k(a))(p)
+                            Some(ReductionPossibility("Predict",
+                              f(predict(map)(NN(Pure(idiom, x))))
+                            )).pure[M]
+                        }
+                      }
+                    }
+                  | Id -> { _ =>
+                      val a = idiom.app
+
+                      Some(ReductionPossibility("Push down",
+                        a(NN(Pure(idiom, f)))(NN(Pure(idiom, x)))
+                      ))
+                    }
+                ) map (_.join)
+            }
           }
       )
     }

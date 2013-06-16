@@ -29,37 +29,30 @@ trait Nodes { this: Reductions =>
         case None =>
           normalizedNoReductions
       }
+    val locallyReducible: M[Boolean]
     val normalizedNoReductions: M[Option[RNode]]
     lazy val normalizedOrSame = normalized map (_ getOrElse (NewNode(this)))
   }
 
-  case class Idiom(rep: IdiomType, pure: RNode, app: RNode) {
+  case class Idiom(rep: IdiomType, pure: RNode, app: RNode, join: Option[RNode], predict: Option[RNode]) {
     override def toString = rep.toString
   }
 
   case class App(car: RNode, cdr: RNode) extends Node {
     def isPureIn(idiom: Idiom) =
-      car.toNode flatMap { car =>
-        car.isPureIn(idiom) flatMap { carPure =>
-          if (!carPure)
-            false.pure
-          else
-            cdr.toNode flatMap { cdr =>
-              cdr.isPureIn(idiom)
-            }
-        }
-      }
+      car.toNode flatMap (carNode =>
+        car.toNode flatMap (_.isPureIn(idiom) flatMap (carPure =>
+          if (!carPure) false.pure[M]
+          else cdr.toNode flatMap (_.isPureIn(idiom))
+        ))
+      )
     def isNotImpureIn(idiom: Idiom) =
-      car.toNode flatMap { car =>
-        car.isNotImpureIn(idiom) flatMap { carNotImpure =>
-          if (!carNotImpure)
-            false.pure
-          else
-            cdr.toNode flatMap { cdr =>
-              cdr.isNotImpureIn(idiom)
-            }
-        }
-      }
+      car.toNode flatMap (carNode =>
+        car.toNode flatMap (_.isNotImpureIn(idiom) flatMap (carPure =>
+          if (!carPure) false.pure[M]
+          else cdr.toNode flatMap (_.isNotImpureIn(idiom))
+        ))
+      )
     override def toString = s"$car($cdr)"
     def deepString = s"${car.deepString}(${cdr.deepString})"
     lazy val normalizedNoReductions =
@@ -74,42 +67,39 @@ trait Nodes { this: Reductions =>
               None.pure
           }
       }
+    lazy val locallyReducible = car.locallyReducible flatMap {
+      case true => true.pure[M]
+      case false => StandardReductions.find(NewNode(this)) map {
+        case Some(_) => true
+        case None => false
+      }
+    }
   }
   case class Pure(of: Idiom, is: RNode) extends Node {
     def isPureIn(idiom: Idiom) =
       if (idiom == of)
-        true.pure
+        true.pure[M]
       else
         is.toNode flatMap (_.isPureIn(idiom))
     def isNotImpureIn(idiom: Idiom) =
       if (idiom == of)
-        true.pure
+        true.pure[M]
       else
         is.toNode flatMap (_.isNotImpureIn(idiom))
-    def deepString = s"Pure(${of.toString}, ${is.deepString})"
+    def deepString = s"Pure(${of.toString})"
     lazy val normalizedNoReductions =
       is.normalized flatMap {
         case None => None.pure
         case Some(better) => some(Pure(of, better).normalizedOrSame).sequence
       }
+    lazy val locallyReducible = true.pure[M]
   }
-  case class AntiPure(of: Idiom, is: RNode) extends Node {
-    def isPureIn(idiom: Idiom) =
-      if (idiom == of)
-        false.pure
-      else
-        is.toNode flatMap (_.isPureIn(idiom))
-    def isNotImpureIn(idiom: Idiom) =
-      if (idiom == of)
-        false.pure
-      else
-        is.toNode flatMap (_.isNotImpureIn(idiom))
-    def deepString = s"AntiPure(${of.toString}, ${is.deepString})"
-    lazy val normalizedNoReductions =
-      is.normalized flatMap {
-        case None => None.pure
-        case Some(better) => some(AntiPure(of, better).normalizedOrSame).sequence
-      }
+  case class AntiPure(of: Idiom) extends Node {
+    def isPureIn(idiom: Idiom) = (idiom != of).pure[M]
+    def isNotImpureIn(idiom: Idiom) = (idiom != of).pure[M]
+    def deepString = s"AntiPure(${of.toString})"
+    val normalizedNoReductions = None.pure[M]
+    lazy val locallyReducible = false.pure[M]
   }
 
   case class IntLiteral(n: Int) extends Node {
@@ -118,6 +108,7 @@ trait Nodes { this: Reductions =>
     override def toString = n.toString
     def deepString = n.toString
     lazy val normalizedNoReductions = None.pure[M]
+    lazy val locallyReducible = false.pure[M]
   }
 
   case class Mystery(id: String) extends Node {
@@ -126,6 +117,7 @@ trait Nodes { this: Reductions =>
     override def toString = "?"
     def deepString = "?"
     lazy val normalizedNoReductions = None.pure[M]
+    lazy val locallyReducible = false.pure[M]
   }
 
   case class OperatorLiteral(operator: Operator) extends Node {
@@ -133,6 +125,7 @@ trait Nodes { this: Reductions =>
     def isNotImpureIn(idiom: Idiom) = true.pure[M]
     def deepString = operator.toString
     lazy val normalizedNoReductions = None.pure[M]
+    lazy val locallyReducible = false.pure[M]
   }
 
   import NameUtils._
@@ -149,7 +142,7 @@ trait Nodes { this: Reductions =>
   case object Y extends Operator("Y", 2)
   case object B extends Operator("B", 2)
   case object J extends Operator("J", 1)
-  case object E extends Operator("E", 1)
+  case object Pr extends Operator("Pr", 1)
 
   object NameUtils {
     def kName(select: Seq[Boolean]): String =

@@ -1,4 +1,5 @@
 
+
 package reductionengine.sugar
 
 import scalaz._
@@ -35,7 +36,7 @@ trait SugarNodes { self: Idioms =>
   sealed trait SugarNode {
     val toNode: logic.Node
     val children: Seq[RNode]
-    def withChildren(children: Seq[RNode]): SugarNode
+    def withChildren(children: Seq[RNode]) = local.manifest(children)
     def eliminatingChildAt(index: Int): Either[String, M[FocusedRNode]] =
       Left("Not supported for this kind of node.")
     def eliminatingChildrenAt(indices: Traversable[Int]): Either[String, FocusedRNode] =
@@ -59,8 +60,8 @@ trait SugarNodes { self: Idioms =>
         case logic.AlreadyThere(it)  => AlreadyThere(it)
         case logic.NewNode(node)     => NewNode(node match {
           case logic.App(car, cdr)         => App(t(car), t(cdr))
-          case logic.Pure(idiom, expr)     => Pure(idiom.rep, t(expr))
-          case logic.AntiPure(idiom, expr) => AntiPure(idiom.rep, t(expr))
+          case logic.Pure(idiom, is)       => Pure(idiom.rep, t(is))
+          case logic.AntiPure(idiom)       => AntiPure(idiom.rep)
           case logic.IntLiteral(n)         => IntLiteral(n)
           case logic.OperatorLiteral(op)   => ApicalOperator(BasicOperator(op), Seq())
           case logic.Mystery(n)            => Mystery(n)
@@ -72,7 +73,6 @@ trait SugarNodes { self: Idioms =>
   case class IntLiteral(n: Int) extends SugarNode {
     lazy val toNode = logic.IntLiteral(n)
     lazy val children = Seq()
-    def withChildren(children: Seq[RNode]) = this
     lazy val local = LocalNode.IntLiteral(n)
   }
 
@@ -81,27 +81,31 @@ trait SugarNodes { self: Idioms =>
     override def toString = op.toString
   }
   case object B extends SugarOperator("B", 2)
+  case class AntiPureOp(idiom: Idiom) extends SugarOperator(idiom.toString, 1)
 
   case class ApicalOperator(op: SugarOperator, args: Seq[RNode])
     extends SugarNode
   {
     lazy val toNode = {
       op match {
+        case BasicOperator(op) =>
+          val theArgs = args map (_.toNode)
+          val result = applyAllTo(logic.OperatorLiteral(op), args map (_.toNode))
+          result
         case B =>
           applyAll(args map (_.toNode)) match {
             case NN(it) => it
             case it @ AT(_) =>
               logic.App(NN(logic.OperatorLiteral(logic.I)), it)
           }
-        case BasicOperator(op) =>
+        case AntiPureOp(idiom) =>
           val theArgs = args map (_.toNode)
-          val result = applyAllTo(logic.OperatorLiteral(op), args map (_.toNode))
+          val result = applyAllTo(logic.AntiPure(idiom.toLogic), args map (_.toNode))
           result
       }
     }
     lazy val children = args.toSeq
     lazy val local = LocalNode.ApicalOperator(op)
-    def withChildren(children: Seq[RNode]) = copy(args = children)
 
     // We must assume here that this is in fact a valid child index.
     override def eliminatingChildAt(index: Int): Either[String, M[FocusedRNode]] = Right {
@@ -207,45 +211,38 @@ trait SugarNodes { self: Idioms =>
       ApicalOperator(B, Seq(car, cdr))
   }
 
-  case class Pure(idiom: Idiom, is: RNode) extends SugarNode {
-    lazy val toNode = logic.Pure(idiom.toLogic, is.toNode)
-    lazy val children = Seq(is)
-    def withChildren(children: Seq[RNode]) = children match { case Seq(c) => copy(is=c) }
-    lazy val local = LocalNode.Pure(idiom)
+  object AntiPure {
+    def apply(idiom: Idiom) = ApicalOperator(AntiPureOp(idiom), Seq())
+    def apply(idiom: Idiom, is: RNode) = ApicalOperator(AntiPureOp(idiom), Seq(is))
   }
 
-  case class AntiPure(idiom: Idiom, is: RNode) extends SugarNode {
-    lazy val toNode = logic.AntiPure(idiom.toLogic, is.toNode)
+  case class Pure(of: Idiom, is: RNode) extends SugarNode {
+    lazy val toNode = logic.Pure(of.toLogic, is.toNode)
     lazy val children = Seq(is)
-    def withChildren(children: Seq[RNode]) = children match { case Seq(c) => copy(is=c) }
-    lazy val local = LocalNode.AntiPure(idiom)
+    lazy val local = LocalNode.Pure(of)
   }
 
   case class Mystery(name: String) extends SugarNode {
     lazy val toNode = logic.Mystery(name)
     lazy val children = Seq()
-    def withChildren(children: Seq[RNode]) = this
     lazy val local = LocalNode.Mystery(name)
   }
 
   case class NumberEditor(name: String, progress: String) extends SugarNode {
     lazy val toNode = logic.Mystery(name)
     lazy val children = Seq()
-    def withChildren(children: Seq[RNode]) = this
     lazy val local = LocalNode.NumberEditor(name, progress)
   }
 
   case class AntiPureNameEditor(idiomKind: KindOfIdiom, progress: String, of: RNode) extends SugarNode {
     lazy val toNode = logic.Mystery(idiomKind.toString)
     lazy val children = Seq(of)
-    def withChildren(children: Seq[RNode]) = children match { case Seq(c) => copy(of=c) }
     lazy val local = LocalNode.AntiPureNameEditor(idiomKind, progress)
   }
 
   case class PureNameEditor(idiomKind: KindOfIdiom, progress: String, of: RNode) extends SugarNode {
     lazy val toNode = logic.Mystery(idiomKind.toString)
     lazy val children = Seq(of)
-    def withChildren(children: Seq[RNode]) = children match { case Seq(c) => copy(of=c) }
     lazy val local = LocalNode.PureNameEditor(idiomKind, progress)
   }
 
@@ -253,17 +250,15 @@ trait SugarNodes { self: Idioms =>
   case class VariableEditor(name: String, progress: String) extends SugarNode {
     lazy val toNode = logic.Mystery(name)
     lazy val children = Seq()
-    def withChildren(children: Seq[RNode]) = this
     lazy val local = LocalNode.VariableEditor(name, progress)
   }
 
   case class Variable(name: String) extends SugarNode {
-    lazy val toNode = logic.AntiPure(
-      Idiom(standardIdiomKinds.lambda, name).toLogic,
+    lazy val toNode = logic.App(
+      logic.NewNode(logic.AntiPure(Idiom(standardIdiomKinds.lambda, name).toLogic)),
       standardCombinators.I.toNode
     )
     lazy val children = Seq()
-    def withChildren(children: Seq[RNode]) = this
     lazy val local = LocalNode.Variable(name)
   }
 
@@ -309,14 +304,9 @@ trait SugarNodes { self: Idioms =>
     case class ApicalOperator(op: SugarOperator) extends LocalNode {
       def manifest(children: Seq[RNode]) = self.ApicalOperator(op, children)
     }
-    case class Pure(idiom: Idiom) extends LocalNode {
+    case class Pure(of: Idiom) extends LocalNode {
       def manifest(children: Seq[RNode]) = children match {
-        case Seq(is) => self.Pure(idiom, is)
-      }
-    }
-    case class AntiPure(idiom: Idiom) extends LocalNode {
-      def manifest(children: Seq[RNode]) = children match {
-        case Seq(is) => self.AntiPure(idiom, is)
+        case Seq(is) => self.Pure(of, is)
       }
     }
     case class Mystery(name: String) extends LocalNode {

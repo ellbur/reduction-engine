@@ -33,7 +33,7 @@ trait Editing { self: Editor =>
     focusedChild() = None
     focusedParent() = None
 
-    actHard(s"Make new root at ($x, $y)")
+    actHard(s"Make new root")
   }
 
   def joinTo(target: Bubble) {
@@ -41,7 +41,7 @@ trait Editing { self: Editor =>
       val t = AT(target)
       FocusedRNode(t, Some(t))
     }
-    actHard(s"Join to $target")
+    actHard(s"Join to tree")
   }
 
   def replace(at: Bubble, becomes: FocusedRNode) {

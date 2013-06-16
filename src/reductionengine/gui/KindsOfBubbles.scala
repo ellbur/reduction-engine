@@ -101,30 +101,47 @@ trait KindsOfBubbles { self: Editor =>
     val arity = op.nArgs
   }
 
-  class Pure(val initialLocation: Point, idiom: sugar.Idiom, initialIs: Bubble) extends Bubble with BasicTextBubble {
-    val initialChildren = Seq(initialIs)
-    lazy val localNode = l.Pure(idiom).pure[Target]
+  class Pure(val initialLocation: Point, of: sugar.Idiom, val initialChildren: Seq[Bubble]) extends Bubble {
+    lazy val localNode = l.Pure(of).pure[Target]
 
-    def text =
-      if (idiom.kind == sugar.standardIdiomKinds.lambda)
-        s"λ${idiom.name}"
-      else
-        idiom.toString
-    val neutralBGColor = new Color(255, 255, 255)
-    val focusedBGColor = new Color(150, 150, 150)
-    val fgColor = new Color(20, 20, 20)
-    val arity = 1
-  }
+    def render(g: Graphics2D) = {
+      val Point(x, y) = location.now
 
-  class AntiPure(val initialLocation: Point, idiom: sugar.Idiom, initialIs: Bubble) extends Bubble with BasicTextBubble {
-    val initialChildren = Seq(initialIs)
-    lazy val localNode = l.AntiPure(idiom).pure[Target]
+      val text =
+        if (of.kind == sugar.standardIdiomKinds.lambda)
+          "λ" + of.name
+        else
+          s"${of.kind.name}(${of.name}})"
 
-    def text = idiom.toString
-    val neutralBGColor = new Color(255, 255, 255)
-    val focusedBGColor = new Color(150, 150, 150)
-    val fgColor = new Color(20, 20, 20)
-    val arity = 1
+      val textWidth = g.getFontMetrics.stringWidth(text)
+      val textHeight = g.getFontMetrics.getHeight
+      val textX = x - textWidth/2
+      val textY = y + textHeight/2 + 1
+
+      if (hasFocus) {
+        g.setColor(Color.lightGray)
+        g.fillRoundRect(textX, textY-textHeight, textWidth, textHeight, 2, 2)
+      }
+
+      g.setColor(Color.black)
+      g.drawString(text, textX, textY)
+
+      val arcRadius = 30
+      val arcX = x - arcRadius
+      val arcY = textY + 2
+
+      g.setColor(Color.black)
+      g.setStroke(arcStroke)
+      g.drawArc(arcX, arcY, arcRadius*2, arcRadius*2, 75, 30)
+
+      BubbleRendering(
+        new Rectangle(textX, textY-textHeight, textWidth, textHeight + 5),
+        new Point(x, textY-textHeight),
+        Seq(Point(x, textY + 5))
+      )
+    }
+
+    val arcStroke = new BasicStroke(1)
   }
 
   class Mystery(val initialLocation: Point, name: String) extends Bubble with BasicTextBubble {
@@ -220,7 +237,7 @@ trait KindsOfBubbles { self: Editor =>
       val apNode = NN(s.AntiPure(idiom, AT(of.now)))
       canvas.requestFocus()
       replace(this, FocusedRNode(apNode, Some(apNode)))
-      actHard(s"Collect ${idiomKind.name} $text")
+      actHard(s"Bury ${idiomKind.name} $text")
     }
 
     val arity = 1
@@ -240,7 +257,7 @@ trait KindsOfBubbles { self: Editor =>
       val pNode = NN(s.Pure(idiom, AT(of.now)))
       canvas.requestFocus()
       replace(this, FocusedRNode(pNode, Some(pNode)))
-      actHard(s"Bury ${idiomKind.name} $text")
+      actHard(s"Collect ${idiomKind.name} $text")
     }
 
     val arity = 1
