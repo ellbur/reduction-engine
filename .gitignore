@@ -6,4 +6,5 @@
 !.gitignore
 !*.xml
 target
+.idea/workspace.xml
 
