@@ -27,7 +27,7 @@ trait SugarNodes { self: Idioms =>
     type M[+X] = self.M[X]
     val monad = self.monad
     type IdiomType = self.Idiom
-    type NodeType = self.NodeType
+    type NodeType = self.RNode
   }
   import logic.{NewNode => NN, AlreadyThere => AT, applyAll, applyAllTo}
 
@@ -57,10 +57,10 @@ trait SugarNodes { self: Idioms =>
       import SugarNode.{translateDeep => t}
 
       n match {
-        case logic.AlreadyThere(it)  => AlreadyThere(it)
+        case logic.AlreadyThere(it)  => it
         case logic.NewNode(node)     => NewNode(node match {
           case logic.App(car, cdr)         => App(t(car), t(cdr))
-          case logic.Pure(idiom, is)       => Pure(idiom.rep, t(is))
+          case logic.Pure(idiom)           => Pure(idiom.rep)
           case logic.AntiPure(idiom)       => AntiPure(idiom.rep)
           case logic.IntLiteral(n)         => IntLiteral(n)
           case logic.OperatorLiteral(op)   => ApicalOperator(BasicOperator(op), Seq())
@@ -81,7 +81,9 @@ trait SugarNodes { self: Idioms =>
     override def toString = op.toString
   }
   case object B extends SugarOperator("B", 2)
+  case class PureOp(idiom: Idiom) extends SugarOperator(idiom.toString, 1)
   case class AntiPureOp(idiom: Idiom) extends SugarOperator(idiom.toString, 1)
+  case class NodeOp(_name: String, implementation: RNode, _nArgs: Int) extends SugarOperator(_name, _nArgs)
 
   case class ApicalOperator(op: SugarOperator, args: Seq[RNode])
     extends SugarNode
@@ -89,18 +91,29 @@ trait SugarNodes { self: Idioms =>
     lazy val toNode = {
       op match {
         case BasicOperator(op) =>
-          val theArgs = args map (_.toNode)
-          val result = applyAllTo(logic.OperatorLiteral(op), args map (_.toNode))
+          val theArgs = args map (AT(_))
+          val result = applyAllTo(logic.OperatorLiteral(op), theArgs)
           result
         case B =>
-          applyAll(args map (_.toNode)) match {
+          applyAll(args map (AT(_))) match {
             case NN(it) => it
             case it @ AT(_) =>
               logic.App(NN(logic.OperatorLiteral(logic.I)), it)
           }
+        case PureOp(idiom) =>
+          val theArgs = args map (AT(_))
+          val result = applyAllTo(logic.Pure(idiom.toLogic), args map (AT(_)))
+          result
         case AntiPureOp(idiom) =>
-          val theArgs = args map (_.toNode)
-          val result = applyAllTo(logic.AntiPure(idiom.toLogic), args map (_.toNode))
+          val theArgs = args map (AT(_))
+          val result = applyAllTo(logic.AntiPure(idiom.toLogic), args map (AT(_)))
+          result
+        case NodeOp(name, impl, nArgs) =>
+          val theArgs = args map (AT(_))
+          val result = applyAllTo(impl match {
+            case nn: NewNode => nn.s.toNode
+            case it: AlreadyThere => logic.App(NN(logic.OperatorLiteral(logic.I)), AT(it))
+          }, theArgs)
           result
       }
     }
@@ -174,7 +187,7 @@ trait SugarNodes { self: Idioms =>
               val idiom = Idiom(standardIdiomKinds.lambda, name)
 
               children.all { child =>
-                child.toNode.toNode.now.isNotImpureIn(idiom.toLogic).now
+                child.toNode.now.isNotImpureIn(idiom.toLogic).now
               } match {
                 case true => (name, idiom)
                 case false => findAcceptableName(n + 1)
@@ -211,15 +224,14 @@ trait SugarNodes { self: Idioms =>
       ApicalOperator(B, Seq(car, cdr))
   }
 
+  object Pure {
+    def apply(idiom: Idiom) = ApicalOperator(PureOp(idiom), Seq())
+    def apply(idiom: Idiom, is: RNode) = ApicalOperator(PureOp(idiom), Seq(is))
+  }
+
   object AntiPure {
     def apply(idiom: Idiom) = ApicalOperator(AntiPureOp(idiom), Seq())
     def apply(idiom: Idiom, is: RNode) = ApicalOperator(AntiPureOp(idiom), Seq(is))
-  }
-
-  case class Pure(of: Idiom, is: RNode) extends SugarNode {
-    lazy val toNode = logic.Pure(of.toLogic, is.toNode)
-    lazy val children = Seq(is)
-    lazy val local = LocalNode.Pure(of)
   }
 
   case class Mystery(name: String) extends SugarNode {
@@ -256,23 +268,40 @@ trait SugarNodes { self: Idioms =>
   case class Variable(name: String) extends SugarNode {
     lazy val toNode = logic.App(
       logic.NewNode(logic.AntiPure(Idiom(standardIdiomKinds.lambda, name).toLogic)),
-      standardCombinators.I.toNode
+      AT(standardCombinators.I)
     )
     lazy val children = Seq()
     lazy val local = LocalNode.Variable(name)
   }
 
-  sealed trait SugarReplacement {
+  case class PairList(elements: Seq[RNode]) extends SugarNode {
+    lazy val toNode = {
+      val nil = NN(logic.OperatorLiteral(logic.PairListNil))
+      val cons = NN(logic.OperatorLiteral(logic.PairListCons))
+
+      def core(things: List[RNode]): logic.NewNode = things match {
+        case Nil => nil
+        case thing :: thingsP =>
+          cons(AT(thing))(core(thingsP))
+      }
+      core(elements.toList).is
+    }
+    lazy val children = elements
+    lazy val local = LocalNode.PairList()
+  }
+
+  sealed trait SugarReplacement extends logic.NodeLike {
     val height: Int
     def apply(cdr: SugarReplacement) = NewNode(App(this, cdr))
-    val toNode: logic.RNode
+    val toNode: M[logic.Node]
     val duplicated: M[RNode]
     val children: M[Seq[RNode]]
+    lazy val normalized = SugarNode.translateDeep(AT(this).normalizedOrSame.now)
   }
   case class AlreadyThere(t: NodeType) extends SugarReplacement {
     lazy val height = 0
     override lazy val toString = "*"
-    val toNode = logic.AlreadyThere(t)
+    val toNode = t.toNode
     lazy val duplicated = t.toSugarNode flatMap (_.duplicated map { sn =>
       NewNode(sn, replacing=Some(this))
     })
@@ -287,7 +316,7 @@ trait SugarNodes { self: Idioms =>
         1 + ch.max
     }
     override lazy val toString = s.toString
-    val toNode = NN(s.toNode)
+    val toNode = s.toNode.pure[M]
     lazy val duplicated = s.duplicated map { s_ => NewNode(s_, replacing=Some(this)) }
     lazy val children = s.children.pure[M]
   }
@@ -303,11 +332,6 @@ trait SugarNodes { self: Idioms =>
     }
     case class ApicalOperator(op: SugarOperator) extends LocalNode {
       def manifest(children: Seq[RNode]) = self.ApicalOperator(op, children)
-    }
-    case class Pure(of: Idiom) extends LocalNode {
-      def manifest(children: Seq[RNode]) = children match {
-        case Seq(is) => self.Pure(of, is)
-      }
     }
     case class Mystery(name: String) extends LocalNode {
       def manifest(children: Seq[RNode]) = children match {
@@ -338,6 +362,9 @@ trait SugarNodes { self: Idioms =>
       def manifest(children: Seq[RNode]) = children match {
         case Seq() => self.Variable(name)
       }
+    }
+    case class PairList() extends LocalNode {
+      def manifest(children: Seq[RNode]) = self.PairList(children)
     }
   }
 }

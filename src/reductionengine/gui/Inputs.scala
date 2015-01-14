@@ -64,7 +64,7 @@ trait Inputs { self: Editor =>
       i(k('*'), doOperator(s.BasicOperator(logic.Times)))
 
       i(k('S'), doOperator(s.BasicOperator(logic.S(1))))
-      i(k('K'), doOperator(s.BasicOperator(logic.K(1, Seq(false)))))
+      i(k('K'), doOperator(s.BasicOperator(logic.K_)))
       i(k('I'), doOperator(s.BasicOperator(logic.I)))
       i(k('Y'), doOperator(s.BasicOperator(logic.Y)))
 
@@ -90,6 +90,16 @@ trait Inputs { self: Editor =>
       '0' to '9' foreach { d =>
         i(k(d), beginTypingNumber(Some(d)))
       }
+
+      i(k('['), insertList())
+      i(k(':'), insertElement())
+      i(k('d'), deleteElement())
+
+      i(k('m'), doOperator(s.BasicOperator(logic.Eliminator)))
+
+      // TODO: Something a tad more general.
+      i(k(VK_F1, 0), doOperator(s.BasicOperator(logic.MaybeNothing)))
+      i(k(VK_F2, 0), doOperator(s.BasicOperator(logic.MaybeJust)))
 
       i(k(VK_Z, CTRL_DOWN_MASK), undo())
       i(k(VK_Y, CTRL_DOWN_MASK), redo())

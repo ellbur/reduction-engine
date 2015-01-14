@@ -45,7 +45,7 @@ trait Editing { self: Editor =>
   }
 
   def replace(at: Bubble, becomes: FocusedRNode) {
-    doReplace.fire((at, becomes))
+    doReplace(at, becomes)
   }
 
   def fillAHole(replacing: Mystery => FocusedRNode): Boolean = {
@@ -67,13 +67,28 @@ trait Editing { self: Editor =>
   }
 
   def doOperator(op: sugar.SugarOperator) {
-    if(fillAHole { _ =>
-      val args = 1 to op.nArgs map { i => NN(nextMystery) }
-      val main = NN(s.ApicalOperator(op, args))
-      val focused = if (args.length > 0) Some(args(0)) else Some(main)
-      FocusedRNode(main, focused)
-    })
-      actHard(s"Insert ${op.name}")
+    editingState.focusedBubble.now match {
+      case Some(hole: Mystery) =>
+        val args = 1 to op.nArgs map { i => NN(nextMystery) }
+        val main = NN(s.ApicalOperator(op, args))
+        val focused = if (args.length > 0) Some(args(0)) else Some(main)
+        replace(hole, FocusedRNode(main, focused))
+        actHard(s"Insert ${op.name}")
+
+      case Some(thingElse) =>
+        val otherArgs = 2 to op.nArgs map { i => NN(nextMystery) }
+        val args = Seq(AT(thingElse)) ++ otherArgs
+        val main = NN(s.ApicalOperator(op, args))
+        val focused =
+          if (args.length > 1)
+            Some(args(1))
+          else
+            Some(main)
+        replace(thingElse, FocusedRNode(main, focused))
+        actHard(s"Insert ${op.name}")
+      case None =>
+        message("Nothing selected.")
+    }
   }
 
   def insertApp() {
@@ -100,6 +115,75 @@ trait Editing { self: Editor =>
     fillAHole { _ =>
       val rep = NN(sugar.VariableEditor(nextMysteryCounter.toString, ""))
       FocusedRNode(rep, Some(rep))
+    }
+  }
+
+  def insertList() {
+    fillAHole { _ =>
+      actHard("[ ]")
+      val element = NN(nextMystery)
+      FocusedRNode(NN(sugar.PairList(element :: Nil)), Some(element))
+    }
+  }
+
+  def insertElement() {
+    (editingState.focusedBubble.now, editingState.focusedParent.now) match {
+      case (Some(element), Some(list: PairList)) =>
+        val elements = list.children.now
+        val i = elements.indexOf(element)
+        if (i == -1) {
+          // Not much we can do.
+          message("Not in a list.")
+        }
+        else {
+          val newElement = NN(nextMystery)
+          val newElements = (
+               (elements.slice(0, i+1) map (AT(_)))
+            ++ Seq(newElement)
+            ++ (elements.slice(i+1, elements.length) map (AT(_)))
+          )
+          replace(list, FocusedRNode(
+            NN(sugar.PairList(newElements)),
+            Some(newElement)
+          ))
+          actHard("::")
+        }
+      case _ =>
+        message("Not in a list.")
+    }
+  }
+
+  def deleteElement() {
+    (editingState.focusedBubble.now, editingState.focusedParent.now) match {
+      case (Some(element), Some(list: PairList)) =>
+        val elements = list.children.now
+        val i = elements.indexOf(element)
+        if (i == -1) {
+          // Not much we can do.
+          message("Not in a list.")
+        }
+        else {
+          val newElements = (
+            (elements.slice(0, i) map (AT(_)))
+              ++ (elements.slice(i+1, elements.length) map (AT(_)))
+            )
+
+          val newList = NN(list.toSugarNode.now.withChildren(newElements))
+
+          val toFocus =
+            if (i > 0)
+              AT(elements(i-1))
+            else
+              newList
+
+          replace(list, FocusedRNode(
+            newList,
+            Some(toFocus)
+          ))
+          actHard("Delete element")
+        }
+      case _ =>
+        message("Not in a list.")
     }
   }
 
@@ -292,7 +376,7 @@ trait Editing { self: Editor =>
 
   def normalizeInPlace() {
     withSelected { rootBubble =>
-      sugar.logic.normalize(sugar.logic.AlreadyThere(rootBubble)).now match {
+      sugar.logic.normalize(sugar.logic.AlreadyThere(sugar.AlreadyThere(rootBubble))).now match {
         case Some(normalized) =>
           val backToSugar = sugar.SugarNode.translateDeep(normalized)
           replace(rootBubble, FocusedRNode(backToSugar, Some(backToSugar)))
@@ -305,7 +389,7 @@ trait Editing { self: Editor =>
 
   def normalizeCopy() {
     withSelected { rootBubble =>
-      val normalized = sugar.logic.normalize(LAT(rootBubble)).now match {
+      val normalized = sugar.logic.normalize(LAT(AT(rootBubble))).now match {
         case Some(normalized) => sugar.SugarNode.translateDeep(normalized)
         case None => AT(rootBubble)
       }

@@ -78,6 +78,39 @@ trait KindsOfBubbles { self: Editor =>
             new Point(x, y-4),
             Seq(new Point(x-4, y+4), new Point(x+4, y+4))
           )
+        case sugar.PureOp(of) =>
+          val text =
+            if (of.kind == sugar.standardIdiomKinds.lambda)
+              "λ" + of.name
+            else
+              s"${of.kind.name}(${of.name})"
+
+          val textWidth = g.getFontMetrics.stringWidth(text)
+          val textHeight = g.getFontMetrics.getHeight
+          val textX = x - textWidth/2
+          val textY = y + textHeight/2 + 1
+
+          if (hasFocus) {
+            g.setColor(Color.lightGray)
+            g.fillRoundRect(textX, textY-textHeight, textWidth, textHeight, 2, 2)
+          }
+
+          g.setColor(Color.black)
+          g.drawString(text, textX, textY)
+
+          val arcRadius = 30
+          val arcX = x - arcRadius
+          val arcY = textY + 2
+
+          g.setColor(Color.black)
+          g.setStroke(arcStroke)
+          g.drawArc(arcX, arcY, arcRadius*2, arcRadius*2, 75, 30)
+
+          BubbleRendering(
+            new Rectangle(textX, textY-textHeight, textWidth, textHeight + 5),
+            new Point(x, textY-textHeight),
+            Seq(Point(x, textY + 5))
+          )
         case other =>
           val bgColor =
             if (hasFocus)
@@ -99,48 +132,6 @@ trait KindsOfBubbles { self: Editor =>
     val focusedBGColor = new Color(150, 150, 150)
     val fgColor = Color.black
     val arity = op.nArgs
-  }
-
-  class Pure(val initialLocation: Point, of: sugar.Idiom, val initialChildren: Seq[Bubble]) extends Bubble {
-    lazy val localNode = l.Pure(of).pure[Target]
-
-    def render(g: Graphics2D) = {
-      val Point(x, y) = location.now
-
-      val text =
-        if (of.kind == sugar.standardIdiomKinds.lambda)
-          "λ" + of.name
-        else
-          s"${of.kind.name}(${of.name}})"
-
-      val textWidth = g.getFontMetrics.stringWidth(text)
-      val textHeight = g.getFontMetrics.getHeight
-      val textX = x - textWidth/2
-      val textY = y + textHeight/2 + 1
-
-      if (hasFocus) {
-        g.setColor(Color.lightGray)
-        g.fillRoundRect(textX, textY-textHeight, textWidth, textHeight, 2, 2)
-      }
-
-      g.setColor(Color.black)
-      g.drawString(text, textX, textY)
-
-      val arcRadius = 30
-      val arcX = x - arcRadius
-      val arcY = textY + 2
-
-      g.setColor(Color.black)
-      g.setStroke(arcStroke)
-      g.drawArc(arcX, arcY, arcRadius*2, arcRadius*2, 75, 30)
-
-      BubbleRendering(
-        new Rectangle(textX, textY-textHeight, textWidth, textHeight + 5),
-        new Point(x, textY-textHeight),
-        Seq(Point(x, textY + 5))
-      )
-    }
-
     val arcStroke = new BasicStroke(1)
   }
 
@@ -287,6 +278,44 @@ trait KindsOfBubbles { self: Editor =>
     val focusedBGColor = new Color(150, 150, 150)
     val fgColor = Color.black
     val arity = 0
+  }
+
+  class PairList(val initialLocation: Point, val initialChildren: Seq[Bubble]) extends Bubble {
+    lazy val localNode = l.PairList().pure[Target]
+    def render(g: Graphics2D): BubbleRendering = {
+      val children = this.children.now
+      val n = children.length
+      val Point(x, y) = this.location.now
+
+      val width = childSpacing * n
+      val x1 = x - width/2
+      val x2 = x1 + width
+
+      val height = g.getFontMetrics.getHeight
+      val y1 = y - height/2
+      val y2 = y1 + height
+
+      if (hasFocus) {
+        g.setColor(Color.lightGray)
+        g.fillRect(x1, y1, width, height)
+      }
+
+      g.setColor(Color.black)
+      g.drawString("[", x1, y2)
+      g.drawString("]", x2, y2)
+
+      val elementSpots = (0 to n-1) map { i =>
+        Point(x1+childSpacing/2 + childSpacing*i, y)
+      }
+
+      BubbleRendering(
+        new Rectangle(x1, y1, width, height),
+        Point(x, y1),
+        elementSpots
+      )
+    }
+
+    val childSpacing = 30
   }
 
   val bubbleLineColor = Color.black

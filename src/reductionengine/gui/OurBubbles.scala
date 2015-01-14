@@ -55,10 +55,10 @@ trait OurBubbles { this: Editor =>
   val history = ArrayBuffer[FrozenEditingState]()
 
   import sugar.{NewNode => NN}
-  val K = NN(sugar.ApicalOperator(sugar.BasicOperator(logic.K(1, Seq(false))), Seq()))
-  val S = NN(sugar.ApicalOperator(sugar.BasicOperator(logic.S(1)), Seq()))
   val standardIdiomKinds = Seq(
-    sugar.standardIdiomKinds.lambda
+    sugar.standardIdiomKinds.lambda,
+    sugar.standardIdiomKinds.list,
+    sugar.standardIdiomKinds.maybe
   )
 
   sealed trait DoOrClear
